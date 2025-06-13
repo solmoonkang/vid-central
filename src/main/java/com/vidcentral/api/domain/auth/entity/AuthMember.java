@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public record AuthMember(
 	String email,
+
 	String nickname
 ) {
 

@@ -1,9 +1,9 @@
 package com.vidcentral.support;
 
 import com.vidcentral.api.domain.member.entity.Member;
-import com.vidcentral.api.dto.request.auth.LoginRequest;
-import com.vidcentral.api.dto.request.member.SignUpRequest;
-import com.vidcentral.api.dto.response.auth.LoginResponse;
+import com.vidcentral.api.dto.auth.request.LoginRequest;
+import com.vidcentral.api.dto.member.request.SignUpRequest;
+import com.vidcentral.api.dto.auth.response.LoginResponse;
 
 public class AuthFixture {
 

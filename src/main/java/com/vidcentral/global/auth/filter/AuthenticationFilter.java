@@ -10,9 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import com.vidcentral.api.application.auth.JwtProviderService;
+import com.vidcentral.global.auth.JwtProvider;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
-import com.vidcentral.global.auth.AuthenticationThreadLocal;
 import com.vidcentral.global.common.util.CookieUtils;
 import com.vidcentral.global.error.exception.NotFoundException;
 
@@ -27,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AuthenticationFilter extends OncePerRequestFilter {
 
-	private final JwtProviderService jwtProviderService;
+	private final JwtProvider jwtProvider;
 	private final HandlerExceptionResolver handlerExceptionResolver;
 
 	@Override
@@ -36,18 +35,18 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 		@NonNull HttpServletResponse httpServletResponse,
 		@NonNull FilterChain filterChain) {
 
-		String accessToken = jwtProviderService.extractToken(ACCESS_TOKEN_HEADER, httpServletRequest);
+		String accessToken = jwtProvider.extractToken(ACCESS_TOKEN_HEADER, httpServletRequest);
 		String refreshToken = CookieUtils.extractRefreshTokenFromCookies(httpServletRequest);
 
 		try {
-			if (jwtProviderService.isUsable(accessToken)) {
+			if (jwtProvider.isUsable(accessToken)) {
 				setAuthenticate(accessToken);
 				filterChain.doFilter(httpServletRequest, httpServletResponse);
 				return;
 			}
 
-			if (jwtProviderService.isUsable(refreshToken)) {
-				String newAccessToken = jwtProviderService.reGenerateToken(refreshToken, httpServletResponse);
+			if (jwtProvider.isUsable(refreshToken)) {
+				String newAccessToken = jwtProvider.reGenerateToken(refreshToken, httpServletResponse);
 				setAuthenticate(newAccessToken);
 				filterChain.doFilter(httpServletRequest, httpServletResponse);
 				return;
@@ -58,15 +57,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 			log.warn("[✅ LOGGER] JWT 에러 상세 설명: {}", exception.getMessage());
 			httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null, exception);
-		} finally {
-			AuthenticationThreadLocal.removeAuthMemberHolder();
 		}
 	}
 
 	protected void setAuthenticate(String accessToken) {
-		final AuthMember authMember = jwtProviderService.extractAuthMemberByAccessToken(accessToken);
+		final AuthMember authMember = jwtProvider.extractAuthMemberByAccessToken(accessToken);
 		final Authentication authentication = new UsernamePasswordAuthenticationToken(authMember, BLANK, null);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		AuthenticationThreadLocal.saveAuthMemberHolder(authMember);
 	}
 }

@@ -1,7 +1,7 @@
 package com.vidcentral.api.application.auth;
 
-import com.vidcentral.api.dto.response.auth.LoginResponse;
-import com.vidcentral.api.dto.response.auth.TokenSaveResponse;
+import com.vidcentral.api.dto.auth.response.LoginResponse;
+import com.vidcentral.api.dto.auth.response.TokenSaveResponse;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

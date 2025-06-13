@@ -20,18 +20,18 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.vidcentral.api.application.auth.AuthorizationService;
-import com.vidcentral.api.application.auth.JwtProviderService;
+import com.vidcentral.global.auth.JwtProvider;
 import com.vidcentral.api.application.media.MediaService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.auth.repository.TokenRepository;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.member.repository.MemberRepository;
-import com.vidcentral.api.dto.request.auth.LoginRequest;
-import com.vidcentral.api.dto.request.member.SignUpRequest;
-import com.vidcentral.api.dto.request.member.UpdateMemberRequest;
-import com.vidcentral.api.dto.response.auth.LoginResponse;
-import com.vidcentral.api.dto.response.auth.TokenSaveResponse;
-import com.vidcentral.api.dto.response.member.MemberInfoResponse;
+import com.vidcentral.api.dto.auth.request.LoginRequest;
+import com.vidcentral.api.dto.member.request.SignUpRequest;
+import com.vidcentral.api.dto.member.request.UpdateMemberRequest;
+import com.vidcentral.api.dto.auth.response.LoginResponse;
+import com.vidcentral.api.dto.auth.response.TokenSaveResponse;
+import com.vidcentral.api.dto.member.response.MemberInfoResponse;
 import com.vidcentral.global.error.exception.BadRequestException;
 import com.vidcentral.global.error.exception.ConflictException;
 import com.vidcentral.global.error.exception.NotFoundException;
@@ -47,7 +47,7 @@ class MemberServiceTest {
 	private MemberService memberService;
 
 	@Mock
-	private JwtProviderService jwtProviderService;
+	private JwtProvider jwtProvider;
 
 	@Mock
 	private MediaService mediaService;
@@ -64,7 +64,7 @@ class MemberServiceTest {
 	@BeforeEach
 	void setUp() {
 		AuthorizationService authorizationService = new AuthorizationService(
-			jwtProviderService,
+			jwtProvider,
 			tokenRepository
 		);
 
@@ -140,8 +140,8 @@ class MemberServiceTest {
 		given(memberRepository.findMemberByEmail(any(String.class))).willReturn(Optional.of(loginMember));
 		given(passwordEncoder.matches(any(String.class), any(String.class))).willReturn(true);
 
-		given(jwtProviderService.generateAccessToken(any(String.class), any(String.class))).willReturn(accessToken);
-		given(jwtProviderService.generateRefreshToken(any(String.class))).willReturn(refreshToken);
+		given(jwtProvider.generateAccessToken(any(String.class), any(String.class))).willReturn(accessToken);
+		given(jwtProvider.generateRefreshToken(any(String.class))).willReturn(refreshToken);
 
 		doNothing().when(tokenRepository).saveToken(any(String.class), any(TokenSaveResponse.class));
 

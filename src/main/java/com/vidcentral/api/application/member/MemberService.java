@@ -10,11 +10,11 @@ import com.vidcentral.api.application.auth.AuthorizationService;
 import com.vidcentral.api.application.media.MediaService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
-import com.vidcentral.api.dto.request.auth.LoginRequest;
-import com.vidcentral.api.dto.request.member.SignUpRequest;
-import com.vidcentral.api.dto.request.member.UpdateMemberRequest;
-import com.vidcentral.api.dto.response.auth.LoginResponse;
-import com.vidcentral.api.dto.response.member.MemberInfoResponse;
+import com.vidcentral.api.dto.auth.request.LoginRequest;
+import com.vidcentral.api.dto.member.request.SignUpRequest;
+import com.vidcentral.api.dto.member.request.UpdateMemberRequest;
+import com.vidcentral.api.dto.auth.response.LoginResponse;
+import com.vidcentral.api.dto.member.response.MemberInfoResponse;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,6 @@ public class MemberService {
 	private final MemberWriteService memberWriteService;
 	private final MemberReadService memberReadService;
 	private final AuthorizationService authorizationService;
-	private final MediaService mediaService;
 
 	@Transactional
 	public void signUpMember(SignUpRequest signUpRequest) {

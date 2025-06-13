@@ -19,12 +19,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import com.vidcentral.api.application.auth.JwtProviderService;
+import com.vidcentral.global.auth.JwtProvider;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.global.error.exception.NotFoundException;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -35,7 +34,7 @@ class AuthenticationFilterTest {
 	private AuthenticationFilter authenticationFilter;
 
 	@Mock
-	private JwtProviderService jwtProviderService;
+	private JwtProvider jwtProvider;
 
 	@Mock
 	private HandlerExceptionResolver handlerExceptionResolver;
@@ -46,7 +45,7 @@ class AuthenticationFilterTest {
 
 	@BeforeEach
 	void setUp() {
-		authenticationFilter = new AuthenticationFilter(jwtProviderService, handlerExceptionResolver);
+		authenticationFilter = new AuthenticationFilter(jwtProvider, handlerExceptionResolver);
 
 		httpServletRequest = mock(HttpServletRequest.class);
 		httpServletResponse = mock(HttpServletResponse.class);
@@ -60,18 +59,18 @@ class AuthenticationFilterTest {
 		String accessToken = "testAccessToken";
 		AuthMember authMember = AuthMember.createAuthMember("testMember@example.com", "testMemberNickname");
 
-		given(jwtProviderService.extractToken(eq(ACCESS_TOKEN_HEADER), any(HttpServletRequest.class)))
+		given(jwtProvider.extractToken(eq(ACCESS_TOKEN_HEADER), any(HttpServletRequest.class)))
 			.willReturn(accessToken);
-		given(jwtProviderService.isUsable(accessToken)).willReturn(true);
-		given(jwtProviderService.extractAuthMemberByAccessToken(accessToken)).willReturn(authMember);
+		given(jwtProvider.isUsable(accessToken)).willReturn(true);
+		given(jwtProvider.extractAuthMemberByAccessToken(accessToken)).willReturn(authMember);
 
 		// WHEN
 		authenticationFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
 		Authentication actualAuthentication = SecurityContextHolder.getContext().getAuthentication();
 
 		// THEN
-		verify(jwtProviderService, times(1)).isUsable(accessToken);
-		verify(jwtProviderService, times(1)).extractAuthMemberByAccessToken(accessToken);
+		verify(jwtProvider, times(1)).isUsable(accessToken);
+		verify(jwtProvider, times(1)).extractAuthMemberByAccessToken(accessToken);
 
 		assertThat(actualAuthentication.getPrincipal()).isEqualTo(authMember);
 	}
@@ -90,21 +89,21 @@ class AuthenticationFilterTest {
 		MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
 		FilterChain mockFilterChain = new MockFilterChain();
 
-		given(jwtProviderService.extractToken(eq(ACCESS_TOKEN_HEADER), any(HttpServletRequest.class)))
+		given(jwtProvider.extractToken(eq(ACCESS_TOKEN_HEADER), any(HttpServletRequest.class)))
 			.willReturn(accessToken);
-		given(jwtProviderService.extractToken(eq(REFRESH_TOKEN_COOKIE), any(HttpServletRequest.class)))
+		given(jwtProvider.extractToken(eq(REFRESH_TOKEN_COOKIE), any(HttpServletRequest.class)))
 			.willReturn(refreshToken);
-		given(jwtProviderService.isUsable(accessToken)).willReturn(false);
-		given(jwtProviderService.isUsable(refreshToken)).willReturn(true);
-		given(jwtProviderService.reGenerateToken(refreshToken, mockHttpServletResponse)).willReturn(newAccessToken);
-		given(jwtProviderService.extractAuthMemberByAccessToken(newAccessToken)).willReturn(authMember);
+		given(jwtProvider.isUsable(accessToken)).willReturn(false);
+		given(jwtProvider.isUsable(refreshToken)).willReturn(true);
+		given(jwtProvider.reGenerateToken(refreshToken, mockHttpServletResponse)).willReturn(newAccessToken);
+		given(jwtProvider.extractAuthMemberByAccessToken(newAccessToken)).willReturn(authMember);
 
 		// WHEN
 		authenticationFilter.doFilterInternal(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
 		Authentication actualAuthentication = SecurityContextHolder.getContext().getAuthentication();
 
 		// THEN
-		verify(jwtProviderService, times(1)).isUsable(accessToken);
+		verify(jwtProvider, times(1)).isUsable(accessToken);
 
 		assertThat(actualAuthentication.getPrincipal()).isEqualTo(authMember);
 	}
@@ -115,9 +114,9 @@ class AuthenticationFilterTest {
 		// GIVEN
 		String expiredToken = "expiredAccessOrRefreshToken";
 
-		given(jwtProviderService.extractToken(any(String.class), any(HttpServletRequest.class)))
+		given(jwtProvider.extractToken(any(String.class), any(HttpServletRequest.class)))
 			.willReturn(expiredToken);
-		given(jwtProviderService.isUsable(any(String.class)))
+		given(jwtProvider.isUsable(any(String.class)))
 			.willReturn(false);
 
 		// WHEN

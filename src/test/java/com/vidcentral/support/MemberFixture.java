@@ -1,8 +1,8 @@
 package com.vidcentral.support;
 
 import com.vidcentral.api.domain.member.entity.Member;
-import com.vidcentral.api.dto.request.member.UpdateMemberRequest;
-import com.vidcentral.api.dto.response.member.MemberInfoResponse;
+import com.vidcentral.api.dto.member.request.UpdateMemberRequest;
+import com.vidcentral.api.dto.member.response.MemberInfoResponse;
 
 public class MemberFixture {
 

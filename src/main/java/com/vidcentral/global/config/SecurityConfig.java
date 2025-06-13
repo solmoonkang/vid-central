@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import com.vidcentral.api.application.auth.JwtProviderService;
+import com.vidcentral.global.auth.JwtProvider;
 import com.vidcentral.global.auth.filter.AuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final JwtProviderService jwtProviderService;
+	private final JwtProvider jwtProvider;
 	private final HandlerExceptionResolver handlerExceptionResolver;
 
 	private static final String[] AUTHENTICATION_REQUEST_ENDPOINTS = {
@@ -61,7 +61,7 @@ public class SecurityConfig {
 			.anyRequest().authenticated());
 
 		httpSecurity.addFilterBefore(
-			new AuthenticationFilter(jwtProviderService, handlerExceptionResolver),
+			new AuthenticationFilter(jwtProvider, handlerExceptionResolver),
 			UsernamePasswordAuthenticationFilter.class);
 
 		return httpSecurity.build();
