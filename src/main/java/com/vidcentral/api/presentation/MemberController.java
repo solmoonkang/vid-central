@@ -1,4 +1,4 @@
-package com.vidcentral.api.presentation.member;
+package com.vidcentral.api.presentation;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.vidcentral.api.application.member.MemberService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
-import com.vidcentral.api.dto.request.auth.LoginRequest;
-import com.vidcentral.api.dto.request.member.SignUpRequest;
-import com.vidcentral.api.dto.request.member.UpdateMemberRequest;
-import com.vidcentral.api.dto.response.auth.LoginResponse;
-import com.vidcentral.api.dto.response.member.MemberInfoResponse;
+import com.vidcentral.api.dto.auth.request.LoginRequest;
+import com.vidcentral.api.dto.member.request.SignUpRequest;
+import com.vidcentral.api.dto.member.request.UpdateMemberRequest;
+import com.vidcentral.api.dto.auth.response.LoginResponse;
+import com.vidcentral.api.dto.member.response.MemberInfoResponse;
 import com.vidcentral.global.auth.annotation.AuthenticationMember;
 
 import io.swagger.v3.oas.annotations.Operation;

@@ -15,12 +15,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.auth.repository.TokenRepository;
 import com.vidcentral.api.domain.member.entity.Member;
-import com.vidcentral.api.dto.response.auth.TokenSaveResponse;
+import com.vidcentral.api.dto.auth.response.TokenSaveResponse;
+import com.vidcentral.global.auth.JwtProvider;
 import com.vidcentral.global.config.TokenConfig;
 import com.vidcentral.global.error.exception.NotFoundException;
 import com.vidcentral.support.JwtFixture;
@@ -33,7 +33,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
-class JwtProviderServiceTest {
+class JwtProviderTest {
 
 	@Mock
 	private TokenConfig tokenConfig;
@@ -42,7 +42,7 @@ class JwtProviderServiceTest {
 	private TokenRepository tokenRepository;
 
 	@InjectMocks
-	private JwtProviderService jwtProviderService;
+	private JwtProvider jwtProvider;
 
 	@BeforeEach
 	void setUp() {
@@ -70,7 +70,7 @@ class JwtProviderServiceTest {
 		String memberNickname = "testMemberNickname";
 
 		// WHEN
-		String accessToken = jwtProviderService.generateAccessToken(memberEmail, memberNickname);
+		String accessToken = jwtProvider.generateAccessToken(memberEmail, memberNickname);
 
 		// THEN
 		Claims actualClaims = Jwts.parser()
@@ -90,7 +90,7 @@ class JwtProviderServiceTest {
 		String memberEmail = "testMember@example.com";
 
 		// WHEN
-		String refreshToken = jwtProviderService.generateRefreshToken(memberEmail);
+		String refreshToken = jwtProvider.generateRefreshToken(memberEmail);
 
 		// THEN
 		Claims actualClaims = Jwts.parser()
@@ -107,13 +107,13 @@ class JwtProviderServiceTest {
 	void reGenerateToken_accessToken_success() {
 		// GIVEN
 		Member loginMember = MemberFixture.createMemberEntity();
-		String refreshToken = jwtProviderService.generateRefreshToken(loginMember.getEmail());
+		String refreshToken = jwtProvider.generateRefreshToken(loginMember.getEmail());
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 
 		given(tokenRepository.getTokenSaveValue(any())).willReturn(new TokenSaveResponse(refreshToken));
 
 		// WHEN
-		String newAccessToken = jwtProviderService.reGenerateToken(refreshToken, httpServletResponse);
+		String newAccessToken = jwtProvider.reGenerateToken(refreshToken, httpServletResponse);
 		Claims actualClaims = Jwts.parser()
 			.verifyWith(tokenConfig.getSecretKey())
 			.build()
@@ -132,13 +132,13 @@ class JwtProviderServiceTest {
 	void reGenerateToken_member_NotFoundException_failure() {
 		// GIVEN
 		Member loginMember = MemberFixture.createMemberEntity();
-		String refreshToken = jwtProviderService.generateRefreshToken(loginMember.getEmail());
+		String refreshToken = jwtProvider.generateRefreshToken(loginMember.getEmail());
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 
 		given(tokenRepository.getTokenSaveValue(any())).willReturn(null);
 
 		// WHEN & THEN
-		assertThatThrownBy(() -> jwtProviderService.reGenerateToken(refreshToken, httpServletResponse))
+		assertThatThrownBy(() -> jwtProvider.reGenerateToken(refreshToken, httpServletResponse))
 			.isInstanceOf(NotFoundException.class)
 			.hasMessage(FAILED_UNAUTHORIZED_MEMBER_ERROR.getMessage());
 	}
@@ -153,7 +153,7 @@ class JwtProviderServiceTest {
 		mockHttpServletRequest.addHeader(ACCESS_TOKEN_HEADER, BEARER + BLANK + accessToken);
 
 		// WHEN
-		String actualToken = jwtProviderService.extractToken(ACCESS_TOKEN_HEADER, mockHttpServletRequest);
+		String actualToken = jwtProvider.extractToken(ACCESS_TOKEN_HEADER, mockHttpServletRequest);
 
 		// THEN
 		assertThat(actualToken).isEqualTo(accessToken);
@@ -169,7 +169,7 @@ class JwtProviderServiceTest {
 		mockHttpServletRequest.addHeader(ACCESS_TOKEN_HEADER, accessToken);
 
 		// WHEN
-		String actualToken = jwtProviderService.extractToken(ACCESS_TOKEN_HEADER, mockHttpServletRequest);
+		String actualToken = jwtProvider.extractToken(ACCESS_TOKEN_HEADER, mockHttpServletRequest);
 
 		// THEN
 		assertThat(actualToken).isNull();
@@ -181,10 +181,10 @@ class JwtProviderServiceTest {
 		// GIVEN
 		String memberEmail = "testMember@example.com";
 		String memberNickname = "testMemberNickname";
-		String accessToken = jwtProviderService.generateAccessToken(memberEmail, memberNickname);
+		String accessToken = jwtProvider.generateAccessToken(memberEmail, memberNickname);
 
 		// WHEN
-		AuthMember actualAuthMember = jwtProviderService.extractAuthMemberByAccessToken(accessToken);
+		AuthMember actualAuthMember = jwtProvider.extractAuthMemberByAccessToken(accessToken);
 
 		// THEN
 		assertThat(actualAuthMember.email()).isEqualTo(memberEmail);
@@ -197,10 +197,10 @@ class JwtProviderServiceTest {
 		// GIVEN
 		String memberEmail = "testMember@example.com";
 		String memberNickname = "testMemberNickname";
-		String accessToken = jwtProviderService.generateAccessToken(memberEmail, memberNickname);
+		String accessToken = jwtProvider.generateAccessToken(memberEmail, memberNickname);
 
 		// WHEN
-		boolean actualTokenUsable = jwtProviderService.isUsable(accessToken);
+		boolean actualTokenUsable = jwtProvider.isUsable(accessToken);
 
 		// THEN
 		assertThat(actualTokenUsable).isTrue();
@@ -213,7 +213,7 @@ class JwtProviderServiceTest {
 		String expiredAccessToken = JwtFixture.createExpiredToken(tokenConfig.getSecretKey());
 
 		// WHEN
-		boolean actualTokenUsable = jwtProviderService.isUsable(expiredAccessToken);
+		boolean actualTokenUsable = jwtProvider.isUsable(expiredAccessToken);
 
 		// THEN
 		assertThat(actualTokenUsable).isFalse();
@@ -226,7 +226,7 @@ class JwtProviderServiceTest {
 		String emptyAccessToken = "";
 
 		// WHEN & THEN
-		assertThatThrownBy(() -> jwtProviderService.isUsable(emptyAccessToken))
+		assertThatThrownBy(() -> jwtProvider.isUsable(emptyAccessToken))
 			.isInstanceOf(NotFoundException.class)
 			.hasMessage(FAILED_TOKEN_NOT_FOUND_ERROR.getMessage());
 	}
@@ -238,7 +238,7 @@ class JwtProviderServiceTest {
 		String invalidAccessToken = "invalidAccessToken";
 
 		// WHEN & THEN
-		assertThatThrownBy(() -> jwtProviderService.isUsable(invalidAccessToken))
+		assertThatThrownBy(() -> jwtProvider.isUsable(invalidAccessToken))
 			.isInstanceOf(NotFoundException.class)
 			.hasMessage(FAILED_INVALID_TOKEN_ERROR.getMessage());
 	}

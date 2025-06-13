@@ -1,4 +1,4 @@
-package com.vidcentral.api.dto.request.auth;
+package com.vidcentral.api.dto.auth.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

@@ -1,4 +1,4 @@
-package com.vidcentral.api.dto.request.member;
+package com.vidcentral.api.dto.member.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;

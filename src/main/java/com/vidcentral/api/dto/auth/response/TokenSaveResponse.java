@@ -1,4 +1,4 @@
-package com.vidcentral.api.dto.response.auth;
+package com.vidcentral.api.dto.auth.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

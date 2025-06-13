@@ -1,4 +1,4 @@
-package com.vidcentral.api.application.auth;
+package com.vidcentral.global.auth;
 
 import static com.vidcentral.global.common.util.GlobalConstant.*;
 import static com.vidcentral.global.common.util.TokenConstant.*;
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.auth.repository.TokenRepository;
-import com.vidcentral.api.dto.response.auth.TokenSaveResponse;
+import com.vidcentral.api.dto.auth.response.TokenSaveResponse;
 import com.vidcentral.global.common.util.CookieUtils;
 import com.vidcentral.global.config.TokenConfig;
 import com.vidcentral.global.error.exception.NotFoundException;
@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class JwtProviderService {
+public class JwtProvider {
 
 	private final TokenConfig tokenConfig;
 	private final TokenRepository tokenRepository;
