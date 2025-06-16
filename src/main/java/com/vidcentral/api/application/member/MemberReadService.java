@@ -42,6 +42,12 @@ public class MemberReadService {
 		}
 	}
 
+	public void validateResidentNumberDuplication(String residentNumber) {
+		if (memberRepository.existsMemberByResidentNumber(residentNumber)) {
+			throw new ConflictException(FAILED_RESIDENT_NUMBER_DUPLICATION_ERROR);
+		}
+	}
+
 	public void validatePasswordMatch(String password, String checkPassword) {
 		if (!password.equals(checkPassword)) {
 			throw new ConflictException(FAILED_PASSWORD_MISMATCH_ERROR);
