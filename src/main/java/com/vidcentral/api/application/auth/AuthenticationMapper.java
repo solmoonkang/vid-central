@@ -10,15 +10,10 @@ import lombok.NoArgsConstructor;
 public class AuthenticationMapper {
 
 	public static LoginResponse toLoginResponse(String accessToken, String refreshToken) {
-		return LoginResponse.builder()
-			.accessToken(accessToken)
-			.refreshToken(refreshToken)
-			.build();
+		return new LoginResponse(accessToken, refreshToken);
 	}
 
 	public static TokenSaveResponse toTokenSaveRequest(String refreshToken) {
-		return TokenSaveResponse.builder()
-			.refreshToken(refreshToken)
-			.build();
+		return new TokenSaveResponse(refreshToken);
 	}
 }
