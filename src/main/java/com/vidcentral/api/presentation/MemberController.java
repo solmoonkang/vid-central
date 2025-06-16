@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.vidcentral.api.application.auth.AuthorizationService;
 import com.vidcentral.api.application.member.MemberService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.dto.auth.request.LoginRequest;
@@ -37,6 +38,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
 	private final MemberService memberService;
+	private final AuthorizationService authorizationService;
 
 	@PostMapping("/signup")
 	@ResponseStatus(HttpStatus.CREATED)
@@ -71,7 +73,7 @@ public class MemberController {
 		HttpServletResponse httpServletResponse,
 		@RequestBody @Valid LoginRequest loginRequest) {
 
-		return ResponseEntity.ok().body(memberService.loginMember(httpServletResponse, loginRequest));
+		return ResponseEntity.ok().body(authorizationService.loginMember(httpServletResponse, loginRequest));
 	}
 
 	@GetMapping("/members/{memberId}")
@@ -108,7 +110,7 @@ public class MemberController {
 		@Valid @RequestPart(required = false) UpdateMemberRequest updateMemberRequest,
 		@RequestPart(name = "profileImageURL") MultipartFile newProfileImageURL) {
 
-		memberService.updateMemberInfo(authMember, updateMemberRequest, newProfileImageURL);
+		memberService.updateMemberInfo(authMember, updateMemberRequest);
 		return ResponseEntity.ok().body("성공적으로 회원 정보가 업데이트되었습니다.");
 	}
 }
