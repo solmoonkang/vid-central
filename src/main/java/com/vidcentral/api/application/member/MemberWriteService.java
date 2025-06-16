@@ -17,13 +17,15 @@ public class MemberWriteService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	public void signUpMember(SignUpRequest signUpRequest) {
-		memberRepository.save(MemberMapper.toMember(signUpRequest, passwordEncoder.encode(signUpRequest.password())));
+	public void saveMember(SignUpRequest signUpRequest, String hashResidentNumber) {
+		final String encodedPassword = passwordEncoder.encode(signUpRequest.password());
+		final Member member = Member.createMember(signUpRequest, encodedPassword, hashResidentNumber);
+
+		memberRepository.save(member);
 	}
 
-	public void changeMemberInfo(Member member, UpdateMemberRequest updateMemberRequest, String newProfileImageURL) {
+	public void changeMemberInfo(Member member, UpdateMemberRequest updateMemberRequest) {
 		member.updateIntroduce(updateMemberRequest.introduce());
 		member.updateNickname(updateMemberRequest.nickname());
-		member.updateProfileImageURL(newProfileImageURL);
 	}
 }
