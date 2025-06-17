@@ -1,4 +1,4 @@
-package com.vidcentral.api.domain.video.entity;
+package com.vidcentral.api.domain.media.entity;
 
 import com.vidcentral.api.domain.tag.entity.Tag;
 
@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "VIDEO_TAGS")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class VideoTag {
+public class MediaTag {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,14 +28,14 @@ public class VideoTag {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "video_id", nullable = false)
-	private Video video;
+	private Media media;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tag_id", nullable = false)
 	private Tag tag;
 
-	private VideoTag(Video video, Tag tag) {
-		this.video = video;
+	private MediaTag(Media media, Tag tag) {
+		this.media = media;
 		this.tag = tag;
 	}
 }
