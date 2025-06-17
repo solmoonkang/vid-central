@@ -1,7 +1,7 @@
 package com.vidcentral.api.domain.history.entity;
 
+import com.vidcentral.api.domain.media.entity.Media;
 import com.vidcentral.api.domain.member.entity.Member;
-import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.global.common.entity.BaseTimeEntity;
 
 import jakarta.persistence.Entity;
@@ -32,10 +32,10 @@ public class ViewHistory extends BaseTimeEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "video_id", nullable = false)
-	private Video video;
+	private Media media;
 
-	private ViewHistory(Member member, Video video) {
+	private ViewHistory(Member member, Media media) {
 		this.member = member;
-		this.video = video;
+		this.media = media;
 	}
 }

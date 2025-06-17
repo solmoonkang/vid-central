@@ -32,6 +32,7 @@ public class MemberService {
 		memberWriteService.saveMember(signUpRequest, hashResidentNumber);
 	}
 
+	// TODO: memberId만 받아서 뭘 어떻게 할건데 이런 식으로 구현을 했는지 이해가 되지 않는다. AuthMember로 검증을 해서 사용자 본인의 정보를 조회할 수 있도록 수정해야 한다.
 	public MemberInfoResponse searchMemberInfo(Long memberId) {
 		final Member loginMember = memberReadService.readMember(memberId);
 		return MemberMapper.toMemberInfoResponse(loginMember);
