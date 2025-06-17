@@ -16,7 +16,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 @Configuration
 public class SwaggerConfig {
 
-	private static final String OPEN_API_TITLE = "Video Platform API Documentation";
+	private static final String OPEN_API_TITLE = "Media Platform API Documentation";
 	private static final String OPEN_API_DESCRIPTION = "해당 API는 사용자 인증, 비디오 업로드, 댓글 기능 등을 제공합니다.";
 	private static final String SECURITY_SCHEME_DESCRIPTION = "JWT 인증을 위한 BEARER 토큰입니다.";
 
