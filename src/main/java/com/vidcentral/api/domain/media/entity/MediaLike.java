@@ -1,6 +1,5 @@
-package com.vidcentral.api.domain.like.entity;
+package com.vidcentral.api.domain.media.entity;
 
-import com.vidcentral.api.domain.media.entity.Media;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.global.common.entity.BaseTimeEntity;
 
@@ -19,17 +18,17 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "VIDEO_LIKES")
+@Table(name = "MEDIA_LIKES")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class VideoLike extends BaseTimeEntity {
+public class MediaLike extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "video_like_id")
+	@Column(name = "media_like_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "video_id", nullable = false)
+	@JoinColumn(name = "media_id", nullable = false)
 	private Media media;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -38,7 +37,7 @@ public class VideoLike extends BaseTimeEntity {
 
 	private boolean isLike;
 
-	private VideoLike(Media media, Member member, boolean isLike) {
+	private MediaLike(Media media, Member member, boolean isLike) {
 		this.media = media;
 		this.member = member;
 		this.isLike = isLike;

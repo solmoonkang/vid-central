@@ -29,7 +29,7 @@ public class Comment extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "video_id", nullable = false)
+	@JoinColumn(name = "media_id", nullable = false)
 	private Media media;
 
 	@ManyToOne(fetch = FetchType.LAZY)
