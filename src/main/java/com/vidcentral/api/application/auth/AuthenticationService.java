@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AuthorizationService {
+public class AuthenticationService {
 
 	private final JwtProvider jwtProvider;
 	private final MemberReadService memberReadService;
