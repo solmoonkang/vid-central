@@ -27,15 +27,15 @@ public class ViewHistory extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "media_id", nullable = false)
+	private Media media;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "video_id", nullable = false)
-	private Media media;
-
-	private ViewHistory(Member member, Media media) {
-		this.member = member;
+	private ViewHistory(Media media, Member member) {
 		this.media = media;
+		this.member = member;
 	}
 }

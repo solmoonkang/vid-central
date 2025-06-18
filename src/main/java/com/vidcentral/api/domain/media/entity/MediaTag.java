@@ -1,6 +1,7 @@
 package com.vidcentral.api.domain.media.entity;
 
 import com.vidcentral.api.domain.tag.entity.Tag;
+import com.vidcentral.global.common.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "MEDIA_TAGS")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MediaTag {
+public class MediaTag extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

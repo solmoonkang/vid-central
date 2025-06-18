@@ -3,6 +3,7 @@ package com.vidcentral.api.domain.media.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.vidcentral.api.domain.comment.entity.Comment;
 import com.vidcentral.api.domain.media.model.MediaType;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.dto.media.request.UploadMediaRequest;
@@ -52,6 +53,15 @@ public class Media extends BaseTimeEntity {
 
 	@OneToMany(mappedBy = "media", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Attachment> attachments = new ArrayList<>();
+
+	@OneToMany(mappedBy = "media", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<MediaTag> mediaTags = new ArrayList<>();
+
+	@OneToMany(mappedBy = "media", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<MediaLike> mediaLikes = new ArrayList<>();
+
+	@OneToMany(mappedBy = "media", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Comment> comments = new ArrayList<>();
 
 	private Media(Member member, String title, String content, MediaType mediaType) {
 		this.member = member;
