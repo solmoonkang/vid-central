@@ -33,8 +33,17 @@ public class CommentService {
 
 	@Transactional
 	public void updateComment(AuthMember authMember, Long commentId, UpdateCommentRequest updateCommentRequest) {
+		final Member member = memberReadService.findMember(authMember.email());
 		final Comment comment = commentReadService.readComment(commentId);
-		commentReadService.validateCommentOwner(comment.getMember().getEmail(), authMember.email());
+		commentReadService.validateUpdatePermission(member, comment);
 		commentWriteService.updateComment(comment, updateCommentRequest);
+	}
+
+	@Transactional
+	public void deleteComment(AuthMember authMember, Long commentId) {
+		final Member member = memberReadService.findMember(authMember.email());
+		final Comment comment = commentReadService.readComment(commentId);
+		commentReadService.validateDeletePermission(member, comment);
+		commentWriteService.deleteComment(comment);
 	}
 }
