@@ -42,4 +42,12 @@ public class MediaLike extends BaseTimeEntity {
 		this.member = member;
 		this.isLike = isLike;
 	}
+
+	public static MediaLike createLike(Media media, Member member, boolean isLike) {
+		return new MediaLike(media, member, isLike);
+	}
+
+	public void updateIsLike(boolean isLike) {
+		this.isLike = isLike;
+	}
 }
