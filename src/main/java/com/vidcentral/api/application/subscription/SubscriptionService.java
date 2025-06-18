@@ -10,6 +10,7 @@ import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.subscription.entity.Subscription;
 import com.vidcentral.api.domain.subscription.repository.SubscriptionRepository;
+import com.vidcentral.api.dto.subscription.response.SubscriptionResponse;
 import com.vidcentral.global.error.exception.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
@@ -23,15 +24,17 @@ public class SubscriptionService {
 
 	private final SubscriptionRepository subscriptionRepository;
 
-	public boolean toggleSubscription(AuthMember authMember, Long channelOwnerId) {
+	public SubscriptionResponse toggleSubscription(AuthMember authMember, Long channelOwnerId) {
 		final Member subscriber = memberReadService.findMember(authMember.email());
 		final Member channelOwner = memberReadService.readMember(channelOwnerId);
 
 		validateNotSelfSubscription(subscriber.getId(), channelOwner.getId());
 
-		return subscriptionRepository.findBySubscriberAndChannelOwner(subscriber, channelOwner)
+		final boolean subscribed = subscriptionRepository.findBySubscriberAndChannelOwner(subscriber, channelOwner)
 			.map(this::unsubscribe)
 			.orElseGet(() -> subscribe(subscriber, channelOwner));
+
+		return new SubscriptionResponse(subscribed);
 	}
 
 	private boolean subscribe(Member subscriber, Member channelOwner) {

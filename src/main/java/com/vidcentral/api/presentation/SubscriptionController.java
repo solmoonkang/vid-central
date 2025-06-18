@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vidcentral.api.application.subscription.SubscriptionService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
+import com.vidcentral.api.dto.subscription.response.SubscriptionResponse;
 import com.vidcentral.global.auth.annotation.Auth;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,8 +38,10 @@ public class SubscriptionController {
 		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 사용자 또는 미디어 오류"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류"),
 	})
-	public ResponseEntity<String> toggleReaction(@Auth AuthMember authMember, @PathVariable Long channelOwnerId) {
-		subscriptionService.toggleSubscription(authMember, channelOwnerId);
-		return ResponseEntity.ok().body("[✅ SUCCESS] 구독 또는 구독취소가 성공적으로 반영되었습니다.");
+	public ResponseEntity<SubscriptionResponse> toggleReaction(
+		@Auth AuthMember authMember,
+		@PathVariable Long channelOwnerId) {
+
+		return ResponseEntity.ok().body(subscriptionService.toggleSubscription(authMember, channelOwnerId));
 	}
 }
