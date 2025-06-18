@@ -10,6 +10,7 @@ import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.subscription.entity.Subscription;
 import com.vidcentral.api.domain.subscription.repository.SubscriptionRepository;
+import com.vidcentral.api.dto.subscription.response.SubscriberCountResponse;
 import com.vidcentral.api.dto.subscription.response.SubscriptionResponse;
 import com.vidcentral.global.error.exception.BadRequestException;
 
@@ -21,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 public class SubscriptionService {
 
 	private final MemberReadService memberReadService;
-
 	private final SubscriptionRepository subscriptionRepository;
 
 	public SubscriptionResponse toggleSubscription(AuthMember authMember, Long channelOwnerId) {
@@ -35,6 +35,12 @@ public class SubscriptionService {
 			.orElseGet(() -> subscribe(subscriber, channelOwner));
 
 		return new SubscriptionResponse(subscribed);
+	}
+
+	public SubscriberCountResponse getSubscriberCount(Long channelOwnerId) {
+		final Member channelOwner = memberReadService.readMember(channelOwnerId);
+		final long subscriberCount = subscriptionRepository.countByChannelOwner(channelOwner);
+		return new SubscriberCountResponse(subscriberCount);
 	}
 
 	private boolean subscribe(Member subscriber, Member channelOwner) {
