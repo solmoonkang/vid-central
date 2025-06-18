@@ -23,6 +23,7 @@ public enum ErrorMessage {
 	FAILED_RESIDENT_NUMBER_DUPLICATION_ERROR("[❎ ERROR] 입력하신 주민번호는 이미 존재하는 주민번호입니다."),
 	FAILED_PASSWORD_MISMATCH_ERROR("[❎ ERROR] 입력하신 비밀번호와 일치하지 않습니다."),
 	FAILED_FORBIDDEN_COMMENT_MODIFY_ERROR("[❎ ERROR] 댓글 수정 접근 권한이 없습니다."),
+	FAILED_FORBIDDEN_COMMENT_DELETE_ERROR("[❎ ERROR] 댓글 삭제 접근 권한이 없습니다."),
 	FAILED_MEMBER_NOT_FOUND_ERROR("[❎ ERROR] 요청하신 사용자는 존재하지 않는 사용자입니다."),
 	FAILED_MEDIA_NOT_FOUND_ERROR("[❎ ERROR] 요청하신 미디어는 존재하지 않는 미디어입니다."),
 	FAILED_COMMENT_NOT_FOUND_ERROR("[❎ ERROR] 요청하신 댓글은 존재하지 않는 댓글입니다."),
