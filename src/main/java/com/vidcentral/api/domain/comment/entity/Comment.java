@@ -2,6 +2,7 @@ package com.vidcentral.api.domain.comment.entity;
 
 import com.vidcentral.api.domain.media.entity.Media;
 import com.vidcentral.api.domain.member.entity.Member;
+import com.vidcentral.api.dto.comment.request.CreateCommentRequest;
 import com.vidcentral.global.common.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -29,19 +30,23 @@ public class Comment extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "media_id", nullable = false)
-	private Media media;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "media_id", nullable = false)
+	private Media media;
 
 	@Column(name = "content", nullable = false)
 	private String content;
 
-	private Comment(Media media, Member member, String content) {
-		this.media = media;
+	private Comment(Member member, Media media, String content) {
 		this.member = member;
+		this.media = media;
 		this.content = content;
+	}
+
+	public static Comment createComment(Member member, Media media, CreateCommentRequest createCommentRequest) {
+		return new Comment(member, media, createCommentRequest.content());
 	}
 }
