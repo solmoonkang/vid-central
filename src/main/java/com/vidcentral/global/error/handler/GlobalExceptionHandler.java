@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.vidcentral.global.error.exception.BadRequestException;
 import com.vidcentral.global.error.exception.ConflictException;
+import com.vidcentral.global.error.exception.ForbiddenException;
 import com.vidcentral.global.error.exception.NotFoundException;
+import com.vidcentral.global.error.exception.UnauthorizedException;
 import com.vidcentral.global.error.exception.VIDCentralException;
 import com.vidcentral.global.error.model.ErrorResponse;
 
@@ -58,6 +60,20 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(BadRequestException.class)
 	protected ErrorResponse handleBadRequestException(VIDCentralException vidCentralException) {
 		log.error("[✅ LOGGER] BAD REQUEST ERROR: 잘못된 요청 에러");
+		return new ErrorResponse(vidCentralException.getMessage(), null);
+	}
+
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ExceptionHandler(UnauthorizedException.class)
+	protected ErrorResponse handleUnauthorizedException(VIDCentralException vidCentralException) {
+		log.error("[✅ LOGGER] UNAUTHORIZED ERROR: 인증되지 않은 사용자 에러");
+		return new ErrorResponse(vidCentralException.getMessage(), null);
+	}
+
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(ForbiddenException.class)
+	protected ErrorResponse handleForbiddenException(VIDCentralException vidCentralException) {
+		log.error("[✅ LOGGER] FORBIDDEN ERROR: 허용되지 않은 권한 에러");
 		return new ErrorResponse(vidCentralException.getMessage(), null);
 	}
 
