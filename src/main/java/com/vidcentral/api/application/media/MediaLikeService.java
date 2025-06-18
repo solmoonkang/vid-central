@@ -10,6 +10,7 @@ import com.vidcentral.api.domain.media.entity.MediaLike;
 import com.vidcentral.api.domain.media.repository.MediaLikeRepository;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.dto.media.request.ReactionRequest;
+import com.vidcentral.api.dto.media.response.ReactionCountResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +21,6 @@ public class MediaLikeService {
 
 	private final MemberReadService memberReadService;
 	private final MediaReadService mediaReadService;
-
 	private final MediaLikeRepository mediaLikeRepository;
 
 	@Transactional
@@ -35,12 +35,21 @@ public class MediaLikeService {
 			);
 	}
 
-	public void createNewReaction(Media media, Member member, boolean isLike) {
+	public ReactionCountResponse getReactionAllCounts(Long mediaId) {
+		final Media media = mediaReadService.readMedia(mediaId);
+
+		final long likeCount = mediaLikeRepository.countByMediaAndIsLike(media, true);
+		final long dislikeCount = mediaLikeRepository.countByMediaAndIsLike(media, false);
+
+		return new ReactionCountResponse(likeCount, dislikeCount);
+	}
+
+	private void createNewReaction(Media media, Member member, boolean isLike) {
 		final MediaLike mediaLike = MediaLike.createLike(media, member, isLike);
 		mediaLikeRepository.save(mediaLike);
 	}
 
-	public void handleExistingReaction(MediaLike existingMediaLike, boolean isLike) {
+	private void handleExistingReaction(MediaLike existingMediaLike, boolean isLike) {
 		if (existingMediaLike.isLike() == isLike) {
 			mediaLikeRepository.delete(existingMediaLike);
 			return;
