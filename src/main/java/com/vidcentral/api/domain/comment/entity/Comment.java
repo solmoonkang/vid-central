@@ -3,6 +3,7 @@ package com.vidcentral.api.domain.comment.entity;
 import com.vidcentral.api.domain.media.entity.Media;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.dto.comment.request.CreateCommentRequest;
+import com.vidcentral.api.dto.comment.request.UpdateCommentRequest;
 import com.vidcentral.global.common.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -48,5 +49,9 @@ public class Comment extends BaseTimeEntity {
 
 	public static Comment createComment(Member member, Media media, CreateCommentRequest createCommentRequest) {
 		return new Comment(member, media, createCommentRequest.content());
+	}
+
+	public void updateComment(UpdateCommentRequest updateCommentRequest) {
+		this.content = updateCommentRequest.content();
 	}
 }
