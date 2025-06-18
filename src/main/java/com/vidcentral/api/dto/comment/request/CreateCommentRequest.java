@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 @Builder
-@Schema(description = "댓글 요청 DTO")
+@Schema(description = "댓글 생성 요청 DTO")
 public record CreateCommentRequest(
 	@Schema(description = "댓글 내용", example = "commentContent")
 	@NotBlank(message = "댓글 내용을 입력해주세요.")
