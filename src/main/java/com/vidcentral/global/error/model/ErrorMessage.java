@@ -17,6 +17,7 @@ public enum ErrorMessage {
 	FAILED_INVALID_COMMENT_ACCESS_ERROR("[❎ ERROR] 유효하지 않은 댓글 접근입니다."),
 	FAILED_MAX_TAG_COUNT_ERROR("[❎ ERROR] 태그는 최대 3개까지 설정할 수 있습니다."),
 	FAILED_S3_RESIZE_ERROR("[❎ ERROR] S3 이미지 리사이즈에 실패했습니다."),
+	FAILED_NOT_SELF_SUBSCRIPTION_ERROR("[❎ ERROR] 자기 자신은 구독할 수 없습니다."),
 	FAILED_UNAUTHORIZED_MEMBER_ERROR("[❎ ERROR] 해당 사용자는 인증되지 않은 사용자입니다."),
 	FAILED_EMAIL_DUPLICATION_ERROR("[❎ ERROR] 입력하신 이메일은 이미 존재하는 이메일입니다."),
 	FAILED_NICKNAME_DUPLICATION_ERROR("[❎ ERROR] 입력하신 닉네임은 이미 존재하는 닉네임입니다."),
