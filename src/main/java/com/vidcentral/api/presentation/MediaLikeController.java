@@ -2,6 +2,7 @@ package com.vidcentral.api.presentation;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vidcentral.api.application.media.MediaLikeService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.dto.media.request.ReactionRequest;
+import com.vidcentral.api.dto.media.response.ReactionCountResponse;
 import com.vidcentral.global.auth.annotation.Auth;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,5 +50,21 @@ public class MediaLikeController {
 
 		mediaLikeService.toggleReaction(authMember, mediaId, reactionRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 좋아요 또는 싫어요가 성공적으로 반영되었습니다.");
+	}
+
+	@GetMapping("/count")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "좋아요/싫어요 전체 개수 조회",
+		description = "요청된 좋아요 또는 싫어요 전체 개수를 조회할 수 있습니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 좋아요 또는 싫어요 조회"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 사용자 또는 미디어 오류"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류"),
+	})
+	public ResponseEntity<ReactionCountResponse> getReactionAllCounts(@PathVariable Long mediaId) {
+		return ResponseEntity.ok().body(mediaLikeService.getReactionAllCounts(mediaId));
 	}
 }
