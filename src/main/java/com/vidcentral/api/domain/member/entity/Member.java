@@ -1,15 +1,13 @@
 package com.vidcentral.api.domain.member.entity;
 
 import static com.vidcentral.global.common.util.GlobalConstant.*;
-import static com.vidcentral.global.common.util.MediaConstant.*;
+import static com.vidcentral.global.common.util.VideoConstant.*;
 import static java.util.Objects.*;
 
 import com.vidcentral.api.dto.member.request.SignUpRequest;
 import com.vidcentral.global.common.entity.BaseTimeEntity;
-import com.vidcentral.api.infrastructure.converter.AESGcmAttributeConverter;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,37 +37,30 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "nickname", nullable = false, unique = true)
 	private String nickname;
 
-	@Column(name = "resident_number", nullable = false)
-	@Convert(converter = AESGcmAttributeConverter.class)
-	private String residentNumber;
-
-	@Column(name = "hash_resident_number", nullable = false, unique = true)
-	private String hashResidentNumber;
-
 	@Column(name = "introduce", length = 50)
 	private String introduce;
 
 	@Column(name = "profile_image_url", nullable = false)
 	private String profileImageURL;
 
-	private Member(String email, String password, String nickname, String residentNumber, String hashResidentNumber) {
+	@Column(name = "refresh_token")
+	private String refreshToken;
+
+	private Member(String email, String password, String nickname, String introduce, String profileImageURL) {
 		this.email = email;
 		this.password = password;
 		this.nickname = nickname;
-		this.residentNumber = residentNumber;
-		this.hashResidentNumber = hashResidentNumber;
-		this.introduce = INTRODUCE_ME;
-		this.profileImageURL = IMAGE_DOMAIN + MEMBER_PROFILE_URL;
+		this.introduce = introduce;
+		this.profileImageURL = profileImageURL;
 	}
 
-	public static Member createMember(SignUpRequest signUpRequest, String encodedPassword, String hashResidentNumber) {
+	public static Member createMember(SignUpRequest signUpRequest, String encodedPassword) {
 		return new Member(
 			signUpRequest.email(),
 			encodedPassword,
 			signUpRequest.nickname(),
-			signUpRequest.residentNumber(),
-			hashResidentNumber
-		);
+			INTRODUCE_ME,
+			IMAGE_DOMAIN + MEMBER_PROFILE_URL);
 	}
 
 	public void updateNickname(String nickname) {
@@ -80,7 +71,7 @@ public class Member extends BaseTimeEntity {
 		this.introduce = requireNonNullElse(introduce, this.introduce);
 	}
 
-	public void updateProfileImageURL(String newProfileImageURL) {
-		this.profileImageURL = requireNonNullElse(newProfileImageURL, this.profileImageURL);
+	public void updateMemberRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 }
