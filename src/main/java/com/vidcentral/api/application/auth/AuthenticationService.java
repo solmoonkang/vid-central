@@ -1,20 +1,18 @@
 package com.vidcentral.api.application.auth;
 
-import static com.vidcentral.global.common.util.TokenConstant.*;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.vidcentral.api.application.auth.mapper.TokenMapper;
+import com.vidcentral.api.application.auth.validator.TokenValidator;
 import com.vidcentral.api.application.member.MemberReadService;
-import com.vidcentral.api.domain.auth.repository.TokenRepository;
+import com.vidcentral.api.application.member.validator.MemberValidator;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.dto.auth.request.LoginRequest;
-import com.vidcentral.api.dto.auth.response.LoginResponse;
-import com.vidcentral.global.auth.JwtProvider;
-import com.vidcentral.global.common.util.CookieUtils;
+import com.vidcentral.api.dto.auth.response.TokenResponse;
+import com.vidcentral.global.auth.model.AuthMember;
+import com.vidcentral.global.auth.provider.JwtProvider;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,27 +20,42 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationService {
 
 	private final JwtProvider jwtProvider;
+	private final MemberValidator memberValidator;
+	private final TokenValidator tokenValidator;
 	private final MemberReadService memberReadService;
-	private final TokenRepository tokenRepository;
 
 	@Transactional
-	public LoginResponse loginMember(HttpServletResponse httpServletResponse, LoginRequest loginRequest) {
-		final Member loginMember = memberReadService.findMember(loginRequest.email());
-		memberReadService.validateLoginPasswordMatch(loginRequest.password(), loginMember.getPassword());
+	public TokenResponse loginMember(LoginRequest loginRequest) {
+		final Member member = memberReadService.getMemberByEmail(loginRequest.email());
+		memberValidator.validateLoginPassword(loginRequest.password(), member.getPassword());
 
-		return issueServiceToken(httpServletResponse, loginMember.getEmail(), loginMember.getNickname());
+		final String accessToken = generateAccessToken(member);
+		final String refreshToken = generateRefreshToken(member);
+		member.updateMemberRefreshToken(refreshToken);
+
+		return TokenMapper.createTokenResponse(accessToken, refreshToken);
 	}
 
-	public LoginResponse issueServiceToken(HttpServletResponse httpServletResponse, String email, String nickname) {
-		final String accessToken = jwtProvider.generateAccessToken(email, nickname);
-		final String refreshToken = jwtProvider.generateRefreshToken(email);
-		tokenRepository.saveToken(email, AuthenticationMapper.toTokenSaveRequest(refreshToken));
+	@Transactional
+	public TokenResponse reissueTokens(String refreshToken) {
+		tokenValidator.validateTokenFormat(refreshToken);
+		final AuthMember authMember = jwtProvider.extractAuthMemberFromToken(refreshToken);
 
-		httpServletResponse.setHeader(ACCESS_TOKEN_HEADER, accessToken);
+		final Member member = memberReadService.getMemberByEmail(authMember.email());
+		tokenValidator.validateTokenExistence(member.getRefreshToken(), refreshToken);
 
-		final Cookie refreshTokenCookie = CookieUtils.generateRefreshTokenCookie(REFRESH_TOKEN_COOKIE, refreshToken);
-		httpServletResponse.addCookie(refreshTokenCookie);
+		final String newAccessToken = generateAccessToken(member);
+		final String newRefreshToken = generateRefreshToken(member);
+		member.updateMemberRefreshToken(newRefreshToken);
 
-		return AuthenticationMapper.toLoginResponse(accessToken, refreshToken);
+		return TokenMapper.createTokenResponse(newAccessToken, newRefreshToken);
+	}
+
+	private String generateAccessToken(Member member) {
+		return jwtProvider.generateAccessToken(member.getId(), member.getEmail(), member.getNickname());
+	}
+
+	private String generateRefreshToken(Member member) {
+		return jwtProvider.generateRefreshToken(member.getEmail());
 	}
 }
