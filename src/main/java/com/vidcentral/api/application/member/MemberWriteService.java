@@ -17,10 +17,9 @@ public class MemberWriteService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	public void saveMember(SignUpRequest signUpRequest, String hashResidentNumber) {
+	public void saveMember(SignUpRequest signUpRequest) {
 		final String encodedPassword = passwordEncoder.encode(signUpRequest.password());
-		final Member member = Member.createMember(signUpRequest, encodedPassword, hashResidentNumber);
-
+		final Member member = Member.createMember(signUpRequest, encodedPassword);
 		memberRepository.save(member);
 	}
 
