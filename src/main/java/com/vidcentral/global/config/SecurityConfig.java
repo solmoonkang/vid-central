@@ -16,8 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import com.vidcentral.global.auth.JwtProvider;
-import com.vidcentral.global.auth.filter.AuthenticationFilter;
+import com.vidcentral.global.auth.provider.JwtProvider;
+import com.vidcentral.global.auth.filter.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -61,7 +61,7 @@ public class SecurityConfig {
 			.anyRequest().authenticated());
 
 		httpSecurity.addFilterBefore(
-			new AuthenticationFilter(jwtProvider, handlerExceptionResolver),
+			new JwtAuthenticationFilter(jwtProvider, handlerExceptionResolver),
 			UsernamePasswordAuthenticationFilter.class);
 
 		return httpSecurity.build();
