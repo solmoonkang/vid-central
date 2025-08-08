@@ -8,11 +8,9 @@ import com.vidcentral.api.domain.member.entity.Member;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-	Optional<Member> findMemberByEmail(String email);
+	Optional<Member> findByEmail(String email);
 
-	boolean existsMemberByEmail(String email);
+	boolean existsByEmail(String email);
 
-	boolean existsMemberByNickname(String nickname);
-
-	boolean existsMemberByResidentNumber(String residentNumber);
+	boolean existsByNickname(String nickname);
 }
