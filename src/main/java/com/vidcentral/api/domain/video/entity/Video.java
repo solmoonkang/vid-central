@@ -1,5 +1,7 @@
 package com.vidcentral.api.domain.video.entity;
 
+import java.util.List;
+
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.model.UploadStatus;
 import com.vidcentral.global.common.entity.BaseTimeEntity;
@@ -38,6 +40,9 @@ public class Video extends BaseTimeEntity {
 	@Column(name = "description", nullable = false)
 	private String description;
 
+	@Column(name = "original_file_name")
+	private String originalFileName;
+
 	@Column(name = "file_path")
 	private String filePath;
 
@@ -50,26 +55,34 @@ public class Video extends BaseTimeEntity {
 	@Column(name = "view_count")
 	private Long viewCount;
 
-	public Video(Member member, String title, String description, String filePath, String thumbnailPath) {
+	public Video(Member member, String title, String description, String originalFileName, String filePath, String thumbnailPath) {
 		this.member = member;
 		this.title = title;
 		this.description = description;
+		this.originalFileName = originalFileName;
 		this.filePath = filePath;
 		this.thumbnailPath = thumbnailPath;
 		this.uploadStatus = UploadStatus.UPLOADING;
 		this.viewCount = 0L;
 	}
 
-	public static Video createVideo(Member member, String title, String description) {
-		return new Video(member, title, description, null, null);
+	public static Video createVideo(Member member, String title, String description, String originalFileName) {
+		return new Video(member, title, description, originalFileName, null, null);
 	}
 
 	public void updateUploadStatus(UploadStatus uploadStatus) {
 		this.uploadStatus = uploadStatus;
 	}
 
-	public void updateFilePathAndThumbnailPath(String filePath, String thumbnailPath) {
-		this.filePath = filePath;
+	public void updateOriginalFileName(String originalFileName) {
+		this.originalFileName = originalFileName;
+	}
+
+	public void updateFilePath(List<String> filePaths) {
+		this.filePath = String.join(",", filePaths);
+	}
+
+	public void updateThumbnailPath(String thumbnailPath) {
 		this.thumbnailPath = thumbnailPath;
 	}
 }
