@@ -40,15 +40,11 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
-cloud:
-  aws:
-    s3:
-      bucket: vidcentral-bucket
-    credentials:
-      access-key: AKIA6GBMC2D2YIVKY3ZB
-      secret-key: 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
-    region:
-      static: ap-northeast-2
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password:
 
 logging:
   level:
