@@ -6,6 +6,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class VideoConstant {
 
-	public static final String IMAGE_DOMAIN = "https://image.vidcentral.com/";
-	public static final String MEMBER_PROFILE_URL = "vidcentral/default/member-profile.png";
+	public static final String PROCESSED_VIDEO_PATH = "/home/user/processed/";
+	public static final String THUMBNAIL_PATH = "/home/user/thumbnails";
+	public static final String FFMPEG_EXECUTABLE_PATH = "/user/bin/ffmpeg";
+
+	public static final String RESOLUTION_720P = "_720p.mp4";
+	public static final String THUMBNAIL_EXTENSION = ".jpg";
+
+	public static final String[] VIDEO_ENCODING_OPTIONS = {
+		"-c:v", "libx264", "-crf", "23",
+		"-c:a", "aac", "-b:a", "128k"
+	};
+	public static final String[] THUMBNAIL_OPTIONS = {
+		"-ss", "00:00:01", "-vframes", "1"
+	};
+
+	public static final String VIDEO_STORAGE_PATH = "/home/user/directory/";
 }
