@@ -13,6 +13,6 @@ public class GlobalConstant {
 
 	public static final String INTRODUCE_ME = "본인 소개에 대한 내용을 작성해주세요.";
 
-	public static final String IMAGE_EXTENSION = ".png";
-	public static final String VIDEO_EXTENSION = ".mp4";
+	public static final String IMAGE_DOMAIN = "https://image.vidcentral.com/";
+	public static final String MEMBER_PROFILE_URL = "vidcentral/default/member-profile.png";
 }
