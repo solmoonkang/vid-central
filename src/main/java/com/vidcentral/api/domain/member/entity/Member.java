@@ -1,7 +1,6 @@
 package com.vidcentral.api.domain.member.entity;
 
 import static com.vidcentral.global.common.util.GlobalConstant.*;
-import static com.vidcentral.global.common.util.VideoConstant.*;
 import static java.util.Objects.*;
 
 import com.vidcentral.api.dto.member.request.SignUpRequest;
