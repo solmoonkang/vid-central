@@ -32,7 +32,11 @@ public enum ErrorMessage {
 	EMAIL_DUPLICATED("[❎ ERROR] 이미 사용중인 이메일입니다."),
 	NICKNAME_DUPLICATED("[❎ ERROR] 이미 사용중인 닉네임입니다."),
 
-	FAILED_UNKNOWN_ERROR("[❎ ERROR] 서버에서 알 수 없는 에러가 발생했습니다.");
+	MESSAGE_SEND_ERROR("[❎ ERROR] 메시지 큐 전송에 실패했습니다."),
+	FILE_SAVE_ERROR("[❎ ERROR] 임시 파일 저장에 실패했습니다."),
+	FILE_DELETE_ERROR("[❎ ERROR] 파일 삭제에 실패했습니다."),
+	VIDEO_PROCESSING_ERROR("[❎ ERROR] FFmpeg 명령어 실행에 실패했습니다."),
+	UNKNOWN_SERVER_ERROR("[❎ ERROR] 서버에서 알 수 없는 에러가 발생했습니다.");
 
 	private final String message;
 }
