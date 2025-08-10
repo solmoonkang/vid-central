@@ -1,5 +1,7 @@
 package com.vidcentral.api.dto.video.response;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
@@ -10,6 +12,12 @@ public record VideoProcessingMessage(
 	Long videoId,
 
 	@Schema(description = "비디오 파일 경로")
-	String filePath
+	String filePath,
+
+	@Schema(description = "사용자 지정 파일 이름", example = "videoFileName")
+	String originalFileName,
+
+	@Schema(description = "비디오 해상도 목록", example = "480p, 720p, 1080p")
+	List<String> resolutions
 ) {
 }
