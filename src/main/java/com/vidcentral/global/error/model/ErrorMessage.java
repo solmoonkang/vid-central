@@ -17,6 +17,7 @@ public enum ErrorMessage {
 	INVALID_COMMENT_ACCESS("[❎ ERROR] 유효하지 않은 댓글 접근입니다."),
 	PASSWORD_MISMATCH("[❎ ERROR] 비밀번호와 확인 비밀번호가 일치하지 않습니다."),
 	INVALID_FILE("[❎ ERROR] 파일이 비어있습니다."),
+	INVALID_RESOLUTION("[❎ ERROR] 지원하지 않는 해상도입니다."),
 
 	TOKEN_EXPIRED("[❎ ERROR] 이미 만료된 토큰입니다."),
 	UNAUTHORIZED_MEMBER("[❎ ERROR] 인증되지 않은 사용자입니다."),
