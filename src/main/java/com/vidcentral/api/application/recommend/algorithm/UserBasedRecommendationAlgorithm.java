@@ -6,11 +6,11 @@ import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import com.vidcentral.api.application.history.ViewingHistoryReadService;
+import com.vidcentral.api.application.video.VideoReadService;
 import com.vidcentral.api.domain.history.entity.ViewingHistory;
-import com.vidcentral.api.domain.history.repository.ViewingHistoryRepository;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.model.Category;
-import com.vidcentral.api.domain.video.repository.VideoRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,12 +21,12 @@ public class UserBasedRecommendationAlgorithm implements RecommendationAlgorithm
 	public static final int RECENT_HISTORY_COUNT = 10;
 	public static final int RECOMMENDED_VIDEO_COUNT = 20;
 
-	private final ViewingHistoryRepository viewingHistoryRepository;
-	private final VideoRepository videoRepository;
+	private final VideoReadService videoReadService;
+	private final ViewingHistoryReadService viewingHistoryReadService;
 
 	@Override
 	public List<Video> recommend(Long memberId) {
-		final List<ViewingHistory> recentHistories = viewingHistoryRepository.findWithVideoByMemberId(
+		final List<ViewingHistory> recentHistories = viewingHistoryReadService.findRecentViewingHistoriesBy(
 			memberId, PageRequest.of(0, RECENT_HISTORY_COUNT));
 
 		if (recentHistories.isEmpty())
@@ -39,7 +39,7 @@ public class UserBasedRecommendationAlgorithm implements RecommendationAlgorithm
 			.map(history -> history.getVideo().getId())
 			.toList();
 
-		return videoRepository.findRecommendedVideos(
+		return videoReadService.findRecommendedVideoBy(
 			recentCategories, recentTags, watchedVideoIds, PageRequest.of(0, RECOMMENDED_VIDEO_COUNT));
 	}
 
