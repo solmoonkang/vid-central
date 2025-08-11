@@ -1,13 +1,19 @@
 package com.vidcentral.api.domain.video.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.vidcentral.api.domain.member.entity.Member;
+import com.vidcentral.api.domain.video.model.Category;
 import com.vidcentral.api.domain.video.model.UploadStatus;
 import com.vidcentral.global.common.entity.BaseTimeEntity;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -55,7 +61,20 @@ public class Video extends BaseTimeEntity {
 	@Column(name = "view_count")
 	private Long viewCount;
 
-	public Video(Member member, String title, String description, String originalFileName, String filePath, String thumbnailPath) {
+	@Enumerated(EnumType.STRING)
+	@Column(name = "category", nullable = false)
+	private Category category;
+
+	@ElementCollection
+	@CollectionTable(
+		name = "VIDEO_TAGS", joinColumns = @JoinColumn(name = "video_id")
+	)
+	@Column(name = "tag")
+	private List<String> tags = new ArrayList<>();
+
+	public Video(Member member, String title, String description, String originalFileName, String filePath,
+		String thumbnailPath, Category category, List<String> tags) {
+
 		this.member = member;
 		this.title = title;
 		this.description = description;
@@ -64,10 +83,14 @@ public class Video extends BaseTimeEntity {
 		this.thumbnailPath = thumbnailPath;
 		this.uploadStatus = UploadStatus.UPLOADING;
 		this.viewCount = 0L;
+		this.category = category;
+		this.tags = tags;
 	}
 
-	public static Video createVideo(Member member, String title, String description, String originalFileName) {
-		return new Video(member, title, description, originalFileName, null, null);
+	public static Video createVideo(Member member, String title, String description, String originalFileName,
+		Category category, List<String> tags) {
+
+		return new Video(member, title, description, originalFileName, null, null, category, tags);
 	}
 
 	public void updateUploadStatus(UploadStatus uploadStatus) {
