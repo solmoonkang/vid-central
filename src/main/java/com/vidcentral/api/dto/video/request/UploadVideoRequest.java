@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.vidcentral.api.domain.video.model.Category;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
@@ -24,6 +27,13 @@ public record UploadVideoRequest(
 
 	@Schema(description = "비디오 해상도 목록", example = "480p, 720p, 1080p")
 	List<String> resolutions,
+
+	@NotNull(message = "비디오 카테고리를 선택해주세요.")
+	@Schema(description = "비디오 카테고리", example = "IT_SOFTWARE")
+	Category category,
+
+	@Schema(description = "비디오 태그 목록", example = "Java, Spring, Framework")
+	List<String> tags,
 
 	@Schema(description = "비디오 파일")
 	MultipartFile videoFile
