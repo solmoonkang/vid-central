@@ -32,6 +32,10 @@ public class VideoWriteService {
 		videoUploadManager.processVideoUpload(video.getId(), uploadVideoRequest);
 	}
 
+	public void incrementViewCount(Long videoId) {
+		videoRepository.incrementViewCount(videoId);
+	}
+
 	private String getOriginalFileName(UploadVideoRequest uploadVideoRequest) {
 		if (uploadVideoRequest.originalFileName() == null || uploadVideoRequest.originalFileName().trim().isEmpty())
 			return uploadVideoRequest.videoFile().getOriginalFilename();
