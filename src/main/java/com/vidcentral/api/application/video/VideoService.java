@@ -7,13 +7,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.vidcentral.api.application.comment.CommentReadService;
+import com.vidcentral.api.application.comment.mapper.CommentMapper;
 import com.vidcentral.api.application.recommend.RecommendationService;
 import com.vidcentral.api.application.video.mapper.VideoMapper;
 import com.vidcentral.api.application.video.validator.VideoValidator;
+import com.vidcentral.api.domain.comment.entity.Comment;
 import com.vidcentral.api.domain.video.entity.Video;
+import com.vidcentral.api.dto.comment.response.CommentResponse;
 import com.vidcentral.api.dto.pagination.PagedResponse;
 import com.vidcentral.api.dto.pagination.PaginationInfo;
 import com.vidcentral.api.dto.video.request.UploadVideoRequest;
+import com.vidcentral.api.dto.video.response.VideoDetailResponse;
 import com.vidcentral.api.dto.video.response.VideoListResponse;
 import com.vidcentral.global.auth.model.AuthMember;
 
@@ -28,6 +33,7 @@ public class VideoService {
 	private final VideoWriteService videoWriteService;
 	private final VideoReadService videoReadService;
 	private final RecommendationService recommendationService;
+	private final CommentReadService commentReadService;
 
 	@Transactional
 	public void uploadVideo(AuthMember authMember, UploadVideoRequest uploadVideoRequest) {
@@ -51,5 +57,16 @@ public class VideoService {
 
 		final PaginationInfo paginationInfo = new PaginationInfo(videosPage.getNumber() + 1, videosPage.hasNext());
 		return new PagedResponse<>(videoListResponses, paginationInfo);
+	}
+
+	@Transactional
+	public VideoDetailResponse getVideoDetail(Long videoId) {
+		videoWriteService.incrementViewCount(videoId);
+
+		final Video video = videoReadService.getVideoById(videoId);
+		final List<Comment> comments = commentReadService.getCommentsByVideoId(videoId);
+		final List<CommentResponse> commentResponses = CommentMapper.toCommentListResponse(comments);
+
+		return VideoMapper.toVideoDetailResponse(video, commentResponses);
 	}
 }
