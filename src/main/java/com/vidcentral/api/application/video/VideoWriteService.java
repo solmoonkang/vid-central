@@ -25,7 +25,8 @@ public class VideoWriteService {
 
 		final String originalFileName = getOriginalFileName(uploadVideoRequest);
 		final Video video = Video.createVideo(
-			member, uploadVideoRequest.title(), uploadVideoRequest.description(), originalFileName);
+			member, uploadVideoRequest.title(), uploadVideoRequest.description(), originalFileName,
+			uploadVideoRequest.category(), uploadVideoRequest.tags());
 		videoRepository.save(video);
 
 		videoUploadManager.processVideoUpload(video.getId(), uploadVideoRequest);
