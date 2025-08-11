@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vidcentral.api.application.video.VideoService;
 import com.vidcentral.api.dto.pagination.PagedResponse;
 import com.vidcentral.api.dto.video.request.UploadVideoRequest;
+import com.vidcentral.api.dto.video.response.VideoDetailResponse;
 import com.vidcentral.api.dto.video.response.VideoListResponse;
 import com.vidcentral.global.auth.annotation.Auth;
 import com.vidcentral.global.auth.model.AuthMember;
@@ -78,5 +80,17 @@ public class VideoController {
 		@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
 		return ResponseEntity.ok().body(videoService.getSearchVideos(keyword, pageable));
+	}
+
+	@GetMapping("/{videoId}")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(summary = "비디오 상세 조회", description = "특정 비디오의 상세 정보를 조회하고, 조회수를 1 증가시킵니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "🎉 검색한 비디오 목록 조회 성공"),
+		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 비디오"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<VideoDetailResponse> getVideoDetail(@PathVariable Long videoId) {
+		return ResponseEntity.ok().body(videoService.getVideoDetail(videoId));
 	}
 }
