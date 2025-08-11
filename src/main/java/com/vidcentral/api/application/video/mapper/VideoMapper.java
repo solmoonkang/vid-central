@@ -3,7 +3,9 @@ package com.vidcentral.api.application.video.mapper;
 import java.util.List;
 
 import com.vidcentral.api.domain.video.entity.Video;
+import com.vidcentral.api.dto.comment.response.CommentResponse;
 import com.vidcentral.api.dto.video.request.UploadVideoRequest;
+import com.vidcentral.api.dto.video.response.VideoDetailResponse;
 import com.vidcentral.api.dto.video.response.VideoListResponse;
 import com.vidcentral.api.dto.video.response.VideoProcessingMessage;
 
@@ -29,5 +31,11 @@ public class VideoMapper {
 		return videos.stream()
 			.map(VideoMapper::toVideoResponse)
 			.toList();
+	}
+
+	public static VideoDetailResponse toVideoDetailResponse(Video video, List<CommentResponse> commentResponseList) {
+		return new VideoDetailResponse(video.getId(), video.getTitle(), video.getDescription(), video.getCreatedAt(),
+			video.getFilePath(), video.getThumbnailPath(), video.getViewCount(), video.getMember().getNickname(),
+			video.getLikeCount(), video.getDislikeCount(), commentResponseList);
 	}
 }
