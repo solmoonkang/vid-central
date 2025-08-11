@@ -2,6 +2,7 @@ package com.vidcentral.api.domain.video.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,7 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
 		@Param("tags") List<String> tags,
 		@Param("excludedVideoIds") List<Long> excludedVideoIds,
 		Pageable pageable);
+
+	@Query("SELECT v FROM Video v JOIN FETCH v.member m WHERE v.title LIKE %:keyword% OR m.nickname LIKE %:keyword%")
+	Page<Video> findByTitleOrNicknameContaining(@Param("keyword") String keyword, Pageable pageable);
 }
