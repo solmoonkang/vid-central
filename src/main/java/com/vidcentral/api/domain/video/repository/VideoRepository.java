@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -26,4 +27,8 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
 
 	@Query("SELECT v FROM Video v JOIN FETCH v.member m WHERE v.title LIKE %:keyword% OR m.nickname LIKE %:keyword%")
 	Page<Video> findByTitleOrNicknameContaining(@Param("keyword") String keyword, Pageable pageable);
+
+	@Modifying
+	@Query("UPDATE Video v SET v.viewCount = v.viewCount + 1 WHERE v.id = :videoId")
+	void incrementViewCount(@Param("videoId") Long videoId);
 }
