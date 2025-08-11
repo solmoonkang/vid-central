@@ -5,7 +5,6 @@ import static com.vidcentral.global.common.util.VideoConstant.*;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.vidcentral.api.application.video.mapper.VideoMapper;
 import com.vidcentral.api.dto.video.request.UploadVideoRequest;
@@ -29,15 +28,18 @@ public class VideoUploadManager {
 	private final MessageQueueSender messageQueueSender;
 
 	public void processVideoUpload(Long videoId, UploadVideoRequest uploadVideoRequest) {
-
 		final String filePath = fileStorageService.saveFile(uploadVideoRequest.videoFile());
-
-		List<String> resolutionsToProcess = uploadVideoRequest.resolutions();
-		if (uploadVideoRequest.resolutions() == null || resolutionsToProcess.isEmpty())
-			resolutionsToProcess = List.of(RESOLUTION_480P_SUFFIX.substring(1, 5));
+		final List<String> resolutionsToProcess = getResolutionToProcess(uploadVideoRequest.resolutions());
 
 		final VideoProcessingMessage videoProcessingMessage = VideoMapper.toVideoProcessingMessage(
 			videoId, filePath, uploadVideoRequest, resolutionsToProcess);
 		messageQueueSender.sendMessage(videoProcessingMessage);
+	}
+
+	private List<String> getResolutionToProcess(List<String> resolutions) {
+		if (resolutions == null || resolutions.isEmpty())
+			return List.of(RESOLUTION_480P_VALUE);
+
+		return resolutions;
 	}
 }
