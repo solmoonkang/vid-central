@@ -55,9 +55,9 @@ public class FFmpegService {
 
 	private String getOutputFileName(String baseFileName, String resolution) {
 		return switch (resolution) {
-			case "480p" -> baseFileName + RESOLUTION_480P_SUFFIX;
-			case "720p" -> baseFileName + RESOLUTION_720P_SUFFIX;
-			case "1080p" -> baseFileName + RESOLUTION_1080P_SUFFIX;
+			case RESOLUTION_480P_VALUE -> baseFileName + RESOLUTION_480P_SUFFIX;
+			case RESOLUTION_720P_VALUE -> baseFileName + RESOLUTION_720P_SUFFIX;
+			case RESOLUTION_1080P_VALUE -> baseFileName + RESOLUTION_1080P_SUFFIX;
 			default -> throw new BadRequestException(ErrorMessage.INVALID_RESOLUTION);
 		};
 	}
