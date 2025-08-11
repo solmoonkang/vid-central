@@ -2,6 +2,8 @@ package com.vidcentral.api.application.video;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,7 @@ public class VideoService {
 
 	private final VideoValidator videoValidator;
 	private final VideoWriteService videoWriteService;
+	private final VideoReadService videoReadService;
 	private final RecommendationService recommendationService;
 
 	@Transactional
@@ -36,6 +39,17 @@ public class VideoService {
 		final List<Video> videos = recommendationService.getRecommendedVideos(authMember.id());
 		final List<VideoListResponse> videoListResponses = VideoMapper.toVideoListResponse(videos);
 		final PaginationInfo paginationInfo = new PaginationInfo(1, false);
+		return new PagedResponse<>(videoListResponses, paginationInfo);
+	}
+
+	public PagedResponse<VideoListResponse> getSearchVideos(String keyword, Pageable pageable) {
+		final Page<Video> videosPage = videoReadService.searchVideos(keyword, pageable);
+
+		final List<VideoListResponse> videoListResponses = videosPage.getContent().stream()
+			.map(VideoMapper::toVideoResponse)
+			.toList();
+
+		final PaginationInfo paginationInfo = new PaginationInfo(videosPage.getNumber() + 1, videosPage.hasNext());
 		return new PagedResponse<>(videoListResponses, paginationInfo);
 	}
 }
