@@ -10,9 +10,14 @@ public class VideoConstant {
 	public static final String THUMBNAIL_PATH = "/home/user/thumbnails";
 	public static final String FFMPEG_EXECUTABLE_PATH = "/user/bin/ffmpeg";
 
+	public static final String RESOLUTION_480P_VALUE = "480p";
+	public static final String RESOLUTION_720P_VALUE = "720p";
+	public static final String RESOLUTION_1080P_VALUE = "1080p";
+
 	public static final String RESOLUTION_480P_SUFFIX = "_480p.mp4";
 	public static final String RESOLUTION_720P_SUFFIX = "_720p.mp4";
 	public static final String RESOLUTION_1080P_SUFFIX = "_1080p.mp4";
+
 	public static final String THUMBNAIL_EXTENSION = ".jpg";
 
 	public static final String[] VIDEO_ENCODING_OPTIONS = {
