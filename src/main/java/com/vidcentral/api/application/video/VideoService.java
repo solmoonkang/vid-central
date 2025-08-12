@@ -80,6 +80,13 @@ public class VideoService {
 		videoWriteService.updateVideo(video, updateVideoRequest);
 	}
 
+	@Transactional
+	public void deleteVideo(Long videoId, AuthMember authMember) {
+		final Video video = videoReadService.getVideoById(videoId);
+		validateVideoOwner(video.getMember().getId(), authMember.id());
+		videoWriteService.deleteVideo(videoId);
+	}
+
 	private void validateVideoOwner(Long videoOwnerId, Long authMemberId) {
 		if (!videoOwnerId.equals(authMemberId)) {
 			throw new UnauthorizedException(ErrorMessage.FORBIDDEN_VIDEO_MODIFY);
