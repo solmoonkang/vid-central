@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vidcentral.api.application.video.VideoService;
 import com.vidcentral.api.dto.pagination.PagedResponse;
+import com.vidcentral.api.dto.video.request.UpdateVideoRequest;
 import com.vidcentral.api.dto.video.request.UploadVideoRequest;
 import com.vidcentral.api.dto.video.response.VideoDetailResponse;
 import com.vidcentral.api.dto.video.response.VideoListResponse;
@@ -92,5 +95,23 @@ public class VideoController {
 	})
 	public ResponseEntity<VideoDetailResponse> getVideoDetail(@PathVariable Long videoId) {
 		return ResponseEntity.ok().body(videoService.getVideoDetail(videoId));
+	}
+
+	@PutMapping("/{videoId}")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(summary = "비디오 수정", description = "사용자 인증 후 비디오를 수정합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "🎉 비디오 수정 성공"),
+		@ApiResponse(responseCode = "403", description = "❗️ 비디오 수정 권한 없음"),
+		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 비디오"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<String> updateVideo(
+		@PathVariable Long videoId,
+		@Auth AuthMember authMember,
+		@Valid @RequestBody UpdateVideoRequest updateVideoRequest) {
+
+		videoService.updateVideo(videoId, authMember, updateVideoRequest);
+		return ResponseEntity.ok().body("[✅ SUCCESS] 성공적으로 비디오를 수정했습니다.");
 	}
 }
