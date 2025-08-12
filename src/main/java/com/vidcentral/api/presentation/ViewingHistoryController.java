@@ -1,7 +1,11 @@
 package com.vidcentral.api.presentation;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vidcentral.api.application.history.ViewingHistoryService;
 import com.vidcentral.api.dto.history.request.UpdateHistoryRequest;
+import com.vidcentral.api.dto.history.response.ViewingHistoryResponse;
+import com.vidcentral.api.dto.pagination.PagedResponse;
 import com.vidcentral.global.auth.annotation.Auth;
 import com.vidcentral.global.auth.model.AuthMember;
 
@@ -45,5 +51,19 @@ public class ViewingHistoryController {
 
 		viewingHistoryService.updateViewingHistory(videoId, authMember, updateHistoryRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 성공적으로 시청 기록을 수정했습니다.");
+	}
+
+	@GetMapping
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(summary = "시청 기록 목록 조회", description = "로그인한 사용자의 시청 기록 목록을 조회합니다. 비로그인 사용자는 빈 목록을 반환합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "🎉 시청 기록 목록 조회 성공"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<PagedResponse<ViewingHistoryResponse>> getViewingHistories(
+		@Auth AuthMember authMember,
+		@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+		return ResponseEntity.ok().body(viewingHistoryService.getViewingHistories(authMember, pageable));
 	}
 }
