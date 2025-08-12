@@ -22,7 +22,7 @@ import com.vidcentral.api.dto.pagination.PaginationInfo;
 import com.vidcentral.api.dto.video.request.UpdateVideoRequest;
 import com.vidcentral.api.dto.video.request.UploadVideoRequest;
 import com.vidcentral.api.dto.video.response.VideoDetailResponse;
-import com.vidcentral.api.dto.video.response.VideoListResponse;
+import com.vidcentral.api.dto.video.response.VideoResponse;
 import com.vidcentral.global.auth.model.AuthMember;
 import com.vidcentral.global.error.exception.UnauthorizedException;
 import com.vidcentral.global.error.model.ErrorMessage;
@@ -47,22 +47,22 @@ public class VideoService {
 		videoWriteService.uploadVideo(authMember, uploadVideoRequest);
 	}
 
-	public PagedResponse<VideoListResponse> getRecommendedVideosForUser(AuthMember authMember) {
+	public PagedResponse<VideoResponse> getRecommendedVideosForUser(AuthMember authMember) {
 		final List<Video> videos = recommendationService.getRecommendedVideos(authMember.id());
-		final List<VideoListResponse> videoListResponses = VideoMapper.toVideoListResponse(videos);
+		final List<VideoResponse> videoResponses = VideoMapper.toVideoListResponse(videos);
 		final PaginationInfo paginationInfo = new PaginationInfo(1, false);
-		return new PagedResponse<>(videoListResponses, paginationInfo);
+		return new PagedResponse<>(videoResponses, paginationInfo);
 	}
 
-	public PagedResponse<VideoListResponse> getSearchVideos(String keyword, Pageable pageable) {
+	public PagedResponse<VideoResponse> getSearchVideos(String keyword, Pageable pageable) {
 		final Page<Video> videosPage = videoReadService.searchVideos(keyword, pageable);
 
-		final List<VideoListResponse> videoListResponses = videosPage.getContent().stream()
+		final List<VideoResponse> videoResponses = videosPage.getContent().stream()
 			.map(VideoMapper::toVideoResponse)
 			.toList();
 
 		final PaginationInfo paginationInfo = new PaginationInfo(videosPage.getNumber() + 1, videosPage.hasNext());
-		return new PagedResponse<>(videoListResponses, paginationInfo);
+		return new PagedResponse<>(videoResponses, paginationInfo);
 	}
 
 	@Transactional

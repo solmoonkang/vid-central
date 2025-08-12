@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
-@Schema(description = "비디오 목록 응답 DTO")
-public record VideoListResponse(
+@Schema(description = "비디오 조회 응답 DTO")
+public record VideoResponse(
 	@Schema(description = "비디오 ID", example = "1L")
 	Long videoId,
 

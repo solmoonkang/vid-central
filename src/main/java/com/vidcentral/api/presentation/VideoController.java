@@ -23,7 +23,7 @@ import com.vidcentral.api.dto.pagination.PagedResponse;
 import com.vidcentral.api.dto.video.request.UpdateVideoRequest;
 import com.vidcentral.api.dto.video.request.UploadVideoRequest;
 import com.vidcentral.api.dto.video.response.VideoDetailResponse;
-import com.vidcentral.api.dto.video.response.VideoListResponse;
+import com.vidcentral.api.dto.video.response.VideoResponse;
 import com.vidcentral.global.auth.annotation.Auth;
 import com.vidcentral.global.auth.model.AuthMember;
 
@@ -67,7 +67,7 @@ public class VideoController {
 		@ApiResponse(responseCode = "200", description = "🎉 추천 비디오 목록 조회 성공"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
-	public ResponseEntity<PagedResponse<VideoListResponse>> getRecommendedVideosForUser(@Auth AuthMember authMember) {
+	public ResponseEntity<PagedResponse<VideoResponse>> getRecommendedVideosForUser(@Auth AuthMember authMember) {
 		return ResponseEntity.ok().body(videoService.getRecommendedVideosForUser(authMember));
 	}
 
@@ -79,7 +79,7 @@ public class VideoController {
 		@ApiResponse(responseCode = "400", description = "❌ 검색어 누락"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
-	public ResponseEntity<PagedResponse<VideoListResponse>> getSearchVideos(
+	public ResponseEntity<PagedResponse<VideoResponse>> getSearchVideos(
 		@RequestParam @NotBlank(message = "검색어를 입력해주세요.") String keyword,
 		@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 

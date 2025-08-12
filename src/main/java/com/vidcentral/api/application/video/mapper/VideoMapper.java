@@ -6,7 +6,7 @@ import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.comment.response.CommentResponse;
 import com.vidcentral.api.dto.video.request.UploadVideoRequest;
 import com.vidcentral.api.dto.video.response.VideoDetailResponse;
-import com.vidcentral.api.dto.video.response.VideoListResponse;
+import com.vidcentral.api.dto.video.response.VideoResponse;
 import com.vidcentral.api.dto.video.response.VideoProcessingMessage;
 
 import lombok.AccessLevel;
@@ -22,12 +22,12 @@ public class VideoMapper {
 			uploadVideoRequest.category(), uploadVideoRequest.tags());
 	}
 
-	public static VideoListResponse toVideoResponse(Video video) {
-		return new VideoListResponse(video.getId(), video.getThumbnailPath(), video.getTitle(),
+	public static VideoResponse toVideoResponse(Video video) {
+		return new VideoResponse(video.getId(), video.getThumbnailPath(), video.getTitle(),
 			video.getMember().getNickname(), video.getViewCount(), video.getCreatedAt());
 	}
 
-	public static List<VideoListResponse> toVideoListResponse(List<Video> videos) {
+	public static List<VideoResponse> toVideoListResponse(List<Video> videos) {
 		return videos.stream()
 			.map(VideoMapper::toVideoResponse)
 			.toList();
