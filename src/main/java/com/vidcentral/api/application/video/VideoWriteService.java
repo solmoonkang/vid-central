@@ -7,6 +7,7 @@ import com.vidcentral.api.application.video.upload.VideoUploadManager;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
+import com.vidcentral.api.dto.video.request.UpdateVideoRequest;
 import com.vidcentral.api.dto.video.request.UploadVideoRequest;
 import com.vidcentral.global.auth.model.AuthMember;
 
@@ -34,6 +35,11 @@ public class VideoWriteService {
 
 	public void incrementViewCount(Long videoId) {
 		videoRepository.incrementViewCount(videoId);
+	}
+
+	public void updateVideo(Video video, UpdateVideoRequest updateVideoRequest) {
+		video.updateVideo(updateVideoRequest.title(), updateVideoRequest.description(),
+			updateVideoRequest.thumbnailPath(), updateVideoRequest.category(), updateVideoRequest.tags());
 	}
 
 	private String getOriginalFileName(UploadVideoRequest uploadVideoRequest) {
