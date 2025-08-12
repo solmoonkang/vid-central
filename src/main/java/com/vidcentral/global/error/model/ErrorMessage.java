@@ -29,6 +29,7 @@ public enum ErrorMessage {
 	MEMBER_NOT_FOUND("[❎ ERROR] 존재하지 않는 회원입니다."),
 	VIDEO_NOT_FOUND("[❎ ERROR] 존재하지 않는 비디오입니다."),
 	COMMENT_NOT_FOUND("[❎ ERROR] 존재하지 않는 댓글입니다."),
+	VIEWING_HISTORY_NOT_FOUND("[❎ ERROR] 존재하지 않는 시청 기록입니다."),
 	TOKEN_NOT_FOUND("[❎ ERROR] 존재하지 않는 토큰입니다."),
 
 	EMAIL_DUPLICATED("[❎ ERROR] 이미 사용중인 이메일입니다."),
