@@ -22,6 +22,7 @@ public enum ErrorMessage {
 	TOKEN_EXPIRED("[❎ ERROR] 이미 만료된 토큰입니다."),
 	UNAUTHORIZED_MEMBER("[❎ ERROR] 인증되지 않은 사용자입니다."),
 
+	FORBIDDEN_VIDEO_MODIFY("[❎ ERROR] 비디오 수정 접근 권한이 없습니다."),
 	FORBIDDEN_COMMENT_MODIFY("[❎ ERROR] 댓글 수정 접근 권한이 없습니다."),
 	FORBIDDEN_COMMENT_DELETE("[❎ ERROR] 댓글 삭제 접근 권한이 없습니다."),
 
