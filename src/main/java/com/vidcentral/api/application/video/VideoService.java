@@ -17,10 +17,13 @@ import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.comment.response.CommentResponse;
 import com.vidcentral.api.dto.pagination.PagedResponse;
 import com.vidcentral.api.dto.pagination.PaginationInfo;
+import com.vidcentral.api.dto.video.request.UpdateVideoRequest;
 import com.vidcentral.api.dto.video.request.UploadVideoRequest;
 import com.vidcentral.api.dto.video.response.VideoDetailResponse;
 import com.vidcentral.api.dto.video.response.VideoListResponse;
 import com.vidcentral.global.auth.model.AuthMember;
+import com.vidcentral.global.error.exception.UnauthorizedException;
+import com.vidcentral.global.error.model.ErrorMessage;
 
 import lombok.RequiredArgsConstructor;
 
@@ -68,5 +71,18 @@ public class VideoService {
 		final List<CommentResponse> commentResponses = CommentMapper.toCommentListResponse(comments);
 
 		return VideoMapper.toVideoDetailResponse(video, commentResponses);
+	}
+
+	@Transactional
+	public void updateVideo(Long videoId, AuthMember authMember, UpdateVideoRequest updateVideoRequest) {
+		final Video video = videoReadService.getVideoById(videoId);
+		validateVideoOwner(video.getMember().getId(), authMember.id());
+		videoWriteService.updateVideo(video, updateVideoRequest);
+	}
+
+	private void validateVideoOwner(Long videoOwnerId, Long authMemberId) {
+		if (!videoOwnerId.equals(authMemberId)) {
+			throw new UnauthorizedException(ErrorMessage.FORBIDDEN_VIDEO_MODIFY);
+		}
 	}
 }
