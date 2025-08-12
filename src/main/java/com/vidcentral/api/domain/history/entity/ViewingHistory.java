@@ -52,4 +52,13 @@ public class ViewingHistory extends BaseTimeEntity {
 		this.lastWatchedTime = lastWatchedTime;
 		this.isFinished = isFinished;
 	}
+
+	public static ViewingHistory createViewingHistory(Member member, Video video) {
+		return new ViewingHistory(member, video, 0L, false);
+	}
+
+	public void updateViewingHistory(Long lastWatchedTime, Boolean isFinished) {
+		this.lastWatchedTime = lastWatchedTime;
+		this.isFinished = isFinished;
+	}
 }
