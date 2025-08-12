@@ -1,6 +1,7 @@
 package com.vidcentral.api.application.video;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.vidcentral.api.application.comment.CommentReadService;
 import com.vidcentral.api.application.comment.mapper.CommentMapper;
+import com.vidcentral.api.application.history.ViewingHistoryWriteService;
 import com.vidcentral.api.application.recommend.RecommendationService;
 import com.vidcentral.api.application.video.mapper.VideoMapper;
 import com.vidcentral.api.application.video.validator.VideoValidator;
@@ -37,6 +39,7 @@ public class VideoService {
 	private final VideoReadService videoReadService;
 	private final RecommendationService recommendationService;
 	private final CommentReadService commentReadService;
+	private final ViewingHistoryWriteService viewingHistoryWriteService;
 
 	@Transactional
 	public void uploadVideo(AuthMember authMember, UploadVideoRequest uploadVideoRequest) {
@@ -63,8 +66,11 @@ public class VideoService {
 	}
 
 	@Transactional
-	public VideoDetailResponse getVideoDetail(Long videoId) {
+	public VideoDetailResponse getVideoDetail(Long videoId, AuthMember authMember) {
 		videoWriteService.incrementViewCount(videoId);
+
+		Optional.ofNullable(authMember)
+			.ifPresent(member -> viewingHistoryWriteService.saveViewingHistory(member.id(), videoId));
 
 		final Video video = videoReadService.getVideoById(videoId);
 		final List<Comment> comments = commentReadService.getCommentsByVideoId(videoId);
