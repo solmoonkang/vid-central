@@ -94,8 +94,8 @@ public class VideoController {
 		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 비디오"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
-	public ResponseEntity<VideoDetailResponse> getVideoDetail(@PathVariable Long videoId) {
-		return ResponseEntity.ok().body(videoService.getVideoDetail(videoId));
+	public ResponseEntity<VideoDetailResponse> getVideoDetail(@PathVariable Long videoId, @Auth AuthMember authMember) {
+		return ResponseEntity.ok().body(videoService.getVideoDetail(videoId, authMember));
 	}
 
 	@PutMapping("/{videoId}")
