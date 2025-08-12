@@ -116,4 +116,14 @@ public class Video extends BaseTimeEntity {
 	public void updateThumbnailPath(String thumbnailPath) {
 		this.thumbnailPath = thumbnailPath;
 	}
+
+	public void updateVideo(String title, String description, String thumbnailPath, Category categories,
+		List<String> tags) {
+
+		this.title = title;
+		this.description = description;
+		this.thumbnailPath = thumbnailPath;
+		this.category = categories;
+		this.tags = tags;
+	}
 }
