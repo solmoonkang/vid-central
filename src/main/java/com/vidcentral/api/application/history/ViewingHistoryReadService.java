@@ -2,6 +2,7 @@ package com.vidcentral.api.application.history;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,10 @@ public class ViewingHistoryReadService {
 
 	public List<ViewingHistory> findRecentViewingHistoriesBy(Long memberId, Pageable pageable) {
 		return viewingHistoryRepository.findWithVideoByMemberId(memberId, pageable);
+	}
+
+	public Page<ViewingHistory> findPagedViewingHistoriesBy(Long memberId, Pageable pageable) {
+		return viewingHistoryRepository.findPagedWithVideoByMemberId(memberId, pageable);
 	}
 
 	public ViewingHistory findViewingHistory(Long memberId, Long videoId) {
