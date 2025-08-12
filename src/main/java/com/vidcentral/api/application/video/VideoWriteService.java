@@ -42,6 +42,10 @@ public class VideoWriteService {
 			updateVideoRequest.thumbnailPath(), updateVideoRequest.category(), updateVideoRequest.tags());
 	}
 
+	public void deleteVideo(Long videoId) {
+		videoRepository.deleteById(videoId);
+	}
+
 	private String getOriginalFileName(UploadVideoRequest uploadVideoRequest) {
 		if (uploadVideoRequest.originalFileName() == null || uploadVideoRequest.originalFileName().trim().isEmpty())
 			return uploadVideoRequest.videoFile().getOriginalFilename();
