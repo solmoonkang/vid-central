@@ -1,6 +1,7 @@
 package com.vidcentral.api.domain.history.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,7 @@ public interface ViewingHistoryRepository extends JpaRepository<ViewingHistory, 
 		+ "WHERE vh.member.id = :memberId "
 		+ "ORDER BY vh.createdAt DESC")
 	List<ViewingHistory> findWithVideoByMemberId(@Param("memberId") Long memberId, Pageable pageable);
+
+	@Query("SELECT vh FROM ViewingHistory vh WHERE vh.member.id = :memberId AND vh.video.id = :videoId")
+	Optional<ViewingHistory> findByMemberIdAndVideoId(@Param("memberId") Long memberId, @Param("videoId") Long videoId);
 }
