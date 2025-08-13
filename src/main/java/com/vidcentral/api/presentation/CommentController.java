@@ -2,6 +2,7 @@ package com.vidcentral.api.presentation;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -65,5 +66,19 @@ public class CommentController {
 
 		commentService.updateComment(videoId, authMember, updateCommentRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 성공적으로 댓글을 수정했습니다.");
+	}
+
+	@DeleteMapping("/{videoId}")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(summary = "댓글 삭제", description = "사용자 인증 후 댓글을 삭제합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "🎉 댓글 삭제 성공"),
+		@ApiResponse(responseCode = "401", description = "🔒 만료되었거나 위조된 토큰"),
+		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 회원 혹은 비디오"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<String> deleteComment(@PathVariable Long videoId, @Auth AuthMember authMember) {
+		commentService.deleteComment(videoId, authMember);
+		return ResponseEntity.ok().body("[✅ SUCCESS] 성공적으로 댓글을 삭제했습니다.");
 	}
 }
