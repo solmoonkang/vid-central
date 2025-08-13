@@ -72,8 +72,8 @@ public class VideoService {
 		Optional.ofNullable(authMember)
 			.ifPresent(member -> viewingHistoryWriteService.saveViewingHistory(member.id(), videoId));
 
-		final Video video = videoReadService.getVideoById(videoId);
-		final List<Comment> comments = commentReadService.getCommentsByVideoId(videoId);
+		final Video video = videoReadService.findVideoById(videoId);
+		final List<Comment> comments = commentReadService.findCommentsByVideoId(videoId);
 		final List<CommentResponse> commentResponses = CommentMapper.toCommentListResponse(comments);
 
 		return VideoMapper.toVideoDetailResponse(video, commentResponses);
@@ -81,14 +81,14 @@ public class VideoService {
 
 	@Transactional
 	public void updateVideo(Long videoId, AuthMember authMember, UpdateVideoRequest updateVideoRequest) {
-		final Video video = videoReadService.getVideoById(videoId);
+		final Video video = videoReadService.findVideoById(videoId);
 		validateVideoOwner(video.getMember().getId(), authMember.id());
 		videoWriteService.updateVideo(video, updateVideoRequest);
 	}
 
 	@Transactional
 	public void deleteVideo(Long videoId, AuthMember authMember) {
-		final Video video = videoReadService.getVideoById(videoId);
+		final Video video = videoReadService.findVideoById(videoId);
 		validateVideoOwner(video.getMember().getId(), authMember.id());
 		videoWriteService.deleteVideo(videoId);
 	}

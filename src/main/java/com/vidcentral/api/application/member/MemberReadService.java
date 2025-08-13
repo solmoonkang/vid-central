@@ -15,14 +15,13 @@ public class MemberReadService {
 
 	private final MemberRepository memberRepository;
 
-	public Member getMemberById(Long id) {
+	public Member findMemberById(Long id) {
 		return memberRepository.findById(id)
 			.orElseThrow(() -> new NotFoundException(ErrorMessage.MEMBER_NOT_FOUND));
 	}
 
-	public Member getMemberByEmail(String email) {
+	public Member findMemberByEmail(String email) {
 		return memberRepository.findByEmail(email)
 			.orElseThrow(() -> new NotFoundException(ErrorMessage.MEMBER_NOT_FOUND));
 	}
-
 }

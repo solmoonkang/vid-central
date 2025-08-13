@@ -30,7 +30,7 @@ public class MemberService {
 
 	@Transactional
 	public void updateMember(AuthMember authMember, UpdateMemberRequest updateMemberRequest) {
-		final Member loginMember = memberReadService.getMemberByEmail(authMember.email());
+		final Member loginMember = memberReadService.findMemberByEmail(authMember.email());
 		memberValidator.validateNicknameDuplicated(updateMemberRequest.nickname());
 		memberWriteService.changeMemberInfo(loginMember, updateMemberRequest);
 	}

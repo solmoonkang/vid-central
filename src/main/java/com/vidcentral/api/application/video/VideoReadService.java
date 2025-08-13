@@ -20,7 +20,7 @@ public class VideoReadService {
 
 	private final VideoRepository videoRepository;
 
-	public Video getVideoById(Long videoId) {
+	public Video findVideoById(Long videoId) {
 		return videoRepository.findById(videoId)
 			.orElseThrow(() -> new NotFoundException(ErrorMessage.VIDEO_NOT_FOUND));
 	}
