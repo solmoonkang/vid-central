@@ -7,6 +7,7 @@ import com.vidcentral.api.domain.comment.repository.CommentRepository;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.comment.request.CreateCommentRequest;
+import com.vidcentral.api.dto.comment.request.UpdateCommentRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,5 +20,9 @@ public class CommentWriteService {
 	public void saveComment(Member member, Video video, CreateCommentRequest createCommentRequest) {
 		final Comment comment = Comment.createComment(member, video, createCommentRequest.content());
 		commentRepository.save(comment);
+	}
+
+	public void updateComment(Comment comment, UpdateCommentRequest updateCommentRequest) {
+		comment.updateComment(updateCommentRequest.content());
 	}
 }
