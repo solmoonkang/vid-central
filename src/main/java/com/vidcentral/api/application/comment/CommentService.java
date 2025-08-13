@@ -42,6 +42,16 @@ public class CommentService {
 		commentWriteService.updateComment(comment, updateCommentRequest);
 	}
 
+	@Transactional
+	public void deleteComment(Long videoId, AuthMember authMember) {
+		final Video video = videoReadService.findVideoById(videoId);
+		validateCommentOwner(video.getMember().getId(), authMember.id());
+
+		final Member member = memberReadService.findMemberById(authMember.id());
+		final Comment comment = commentReadService.findCommentBy(member.getId(), video.getId());
+		commentWriteService.deleteComment(comment);
+	}
+
 	private void validateCommentOwner(Long commentOwnerId, Long authMemberId) {
 		if (!commentOwnerId.equals(authMemberId)) {
 			throw new UnauthorizedException(ErrorMessage.FORBIDDEN_COMMENT_MODIFY);
