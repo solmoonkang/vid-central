@@ -25,4 +25,8 @@ public class CommentWriteService {
 	public void updateComment(Comment comment, UpdateCommentRequest updateCommentRequest) {
 		comment.updateComment(updateCommentRequest.content());
 	}
+
+	public void deleteComment(Comment comment) {
+		commentRepository.deleteById(comment.getId());
+	}
 }
