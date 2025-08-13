@@ -1,11 +1,10 @@
 package com.vidcentral.api.presentation;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vidcentral.api.application.comment.CommentService;
 import com.vidcentral.api.dto.comment.request.CreateCommentRequest;
-import com.vidcentral.api.dto.video.request.UploadVideoRequest;
+import com.vidcentral.api.dto.comment.request.UpdateCommentRequest;
 import com.vidcentral.global.auth.annotation.Auth;
 import com.vidcentral.global.auth.model.AuthMember;
 
@@ -48,5 +47,23 @@ public class CommentController {
 
 		commentService.saveComment(videoId, authMember, createCommentRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 성공적으로 댓글을 업로드했습니다.");
+	}
+
+	@PutMapping("/{videoId}")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(summary = "댓글 수정", description = "사용자 인증 후 댓글을 수정합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "🎉 댓글 수정 성공"),
+		@ApiResponse(responseCode = "401", description = "🔒 만료되었거나 위조된 토큰"),
+		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 회원 혹은 비디오"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<String> updateComment(
+		@PathVariable Long videoId,
+		@Auth AuthMember authMember,
+		@Valid @RequestBody UpdateCommentRequest updateCommentRequest) {
+
+		commentService.updateComment(videoId, authMember, updateCommentRequest);
+		return ResponseEntity.ok().body("[✅ SUCCESS] 성공적으로 댓글을 수정했습니다.");
 	}
 }
