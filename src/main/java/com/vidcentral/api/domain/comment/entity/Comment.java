@@ -44,4 +44,8 @@ public class Comment extends BaseTimeEntity {
 		this.video = video;
 		this.content = content;
 	}
+
+	public static Comment createComment(Member member, Video video, String content) {
+		return new Comment(member, video, content);
+	}
 }
