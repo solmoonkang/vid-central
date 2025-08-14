@@ -28,14 +28,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/viewingHistories")
+@RequestMapping("/api/videos")
 @RequiredArgsConstructor
 @Tag(name = "시청 기록 APIs", description = "시청 기록 수정 및 시청 기록 목록 조회 등 시청 기록 관련 API")
 public class ViewingHistoryController {
 
 	private final ViewingHistoryService viewingHistoryService;
 
-	@PutMapping("/{videoId}")
+	@PutMapping("/{videoId}/histories")
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(summary = "시청 기록 수정", description = "인증된 사용자의 시청 기록을 수정합니다.")
 	@ApiResponses(value = {
@@ -53,7 +53,7 @@ public class ViewingHistoryController {
 		return ResponseEntity.ok().body("[✅ SUCCESS] 성공적으로 시청 기록을 수정했습니다.");
 	}
 
-	@GetMapping
+	@GetMapping("/histories")
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(summary = "시청 기록 목록 조회", description = "로그인한 사용자의 시청 기록 목록을 조회합니다. 비로그인 사용자는 빈 목록을 반환합니다.")
 	@ApiResponses(value = {
