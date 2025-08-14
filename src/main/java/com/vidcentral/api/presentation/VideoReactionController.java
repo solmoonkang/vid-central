@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/videos/{videoId}/reactions")
 @RequiredArgsConstructor
-@Tag(name = "", description = "")
+@Tag(name = "비디오 반응 토글 APIs", description = "특정 비디오 반응 등록, 취소, 변경 등 관련 API")
 public class VideoReactionController {
 
 	private final VideoReactionService videoReactionService;
