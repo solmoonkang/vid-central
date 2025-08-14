@@ -21,6 +21,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -78,6 +79,9 @@ public class Video extends BaseTimeEntity {
 	@Column(name = "dislike_count", nullable = false)
 	private Long dislikeCount;
 
+	@Version
+	private long version;
+
 	public Video(Member member, String title, String description, String originalFileName, String filePath,
 		String thumbnailPath, Category category, List<String> tags) {
 
@@ -125,5 +129,21 @@ public class Video extends BaseTimeEntity {
 		this.thumbnailPath = thumbnailPath;
 		this.category = categories;
 		this.tags = tags;
+	}
+
+	public void incrementLikeCount() {
+		this.likeCount++;
+	}
+
+	public void decrementLikeCount() {
+		this.likeCount--;
+	}
+
+	public void incrementDislikeCount() {
+		this.dislikeCount++;
+	}
+
+	public void decrementDislikeCount() {
+		this.dislikeCount--;
 	}
 }
