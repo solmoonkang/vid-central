@@ -1,11 +1,11 @@
 package com.vidcentral.global.config;
 
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.*;
 
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -16,8 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import com.vidcentral.global.auth.provider.JwtProvider;
 import com.vidcentral.global.auth.filter.JwtAuthenticationFilter;
+import com.vidcentral.global.auth.provider.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,25 +29,22 @@ public class SecurityConfig {
 	private final JwtProvider jwtProvider;
 	private final HandlerExceptionResolver handlerExceptionResolver;
 
-	private static final String[] AUTHENTICATION_REQUEST_ENDPOINTS = {
-		"/api/signup",
-		"/api/login"
+	private static final String[] DEV_TOOLS_ENDPOINTS = {
+		"/h2-console/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**"
 	};
-	private static final String[] MEMBER_INFO_ENDPOINTS = {
-		"/api/members/**",
-		"/api/videos/**",
-		"/api/comments/**"
+	private static final String[] AUTHENTICATION_REQUEST_ENDPOINTS = {
+		"/api/signup", "/api/login"
+	};
+	private static final String[] UNAUTHENTICATED_ACCESS_ENDPOINTS = {
+		"/api/videos/recommend", "/api/videos/search", "/api/videos/{videoId}", "/api/videos/histories"
 	};
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return web -> web.ignoring()
 			.requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-			.requestMatchers("/h2-console/**")
-			.requestMatchers("/v3/api-docs/**")
-			.requestMatchers("/swagger-ui/**")
-			.requestMatchers("/swagger-resources/**")
-			.requestMatchers(HttpMethod.POST, AUTHENTICATION_REQUEST_ENDPOINTS);
+			.requestMatchers(DEV_TOOLS_ENDPOINTS)
+			.requestMatchers(POST, AUTHENTICATION_REQUEST_ENDPOINTS);
 	}
 
 	@Bean
@@ -57,7 +54,7 @@ public class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
 
 		httpSecurity.authorizeHttpRequests(auth -> auth
-			.requestMatchers(HttpMethod.GET, MEMBER_INFO_ENDPOINTS).permitAll()
+			.requestMatchers(GET, UNAUTHENTICATED_ACCESS_ENDPOINTS).permitAll()
 			.anyRequest().authenticated());
 
 		httpSecurity.addFilterBefore(
