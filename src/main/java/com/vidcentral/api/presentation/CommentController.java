@@ -25,14 +25,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/comments")
+@RequestMapping("/api/videos/{videoId}/comments")
 @RequiredArgsConstructor
 @Tag(name = "댓글 APIs", description = "댓글 업로드, 수정, 삭제 등 댓글 관련 API")
 public class CommentController {
 
 	private final CommentService commentService;
 
-	@PostMapping("/{videoId}")
+	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	@Operation(summary = "댓글 업로드", description = "사용자 인증 후 댓글을 업로드합니다.")
 	@ApiResponses(value = {
@@ -50,7 +50,7 @@ public class CommentController {
 		return ResponseEntity.ok().body("[✅ SUCCESS] 성공적으로 댓글을 업로드했습니다.");
 	}
 
-	@PutMapping("/{videoId}")
+	@PutMapping
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(summary = "댓글 수정", description = "사용자 인증 후 댓글을 수정합니다.")
 	@ApiResponses(value = {
@@ -68,7 +68,7 @@ public class CommentController {
 		return ResponseEntity.ok().body("[✅ SUCCESS] 성공적으로 댓글을 수정했습니다.");
 	}
 
-	@DeleteMapping("/{videoId}")
+	@DeleteMapping
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(summary = "댓글 삭제", description = "사용자 인증 후 댓글을 삭제합니다.")
 	@ApiResponses(value = {
