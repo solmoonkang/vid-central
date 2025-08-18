@@ -62,6 +62,13 @@ public class Video extends BaseTimeEntity {
 	@Column(name = "view_count")
 	private Long viewCount;
 
+	@ElementCollection
+	@CollectionTable(name = "VIDEO_RESOLUTIONS", joinColumns = {
+		@JoinColumn(name = "video_id")
+	})
+	@Column(name = "resolutions")
+	private List<String> resolutions = new ArrayList<>();
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "category", nullable = false)
 	private Category category;
@@ -83,7 +90,7 @@ public class Video extends BaseTimeEntity {
 	private long version;
 
 	public Video(Member member, String title, String description, String originalFileName, String filePath,
-		String thumbnailPath, Category category, List<String> tags) {
+		String thumbnailPath, List<String> resolutions, Category category, List<String> tags) {
 
 		this.member = member;
 		this.title = title;
@@ -93,16 +100,24 @@ public class Video extends BaseTimeEntity {
 		this.thumbnailPath = thumbnailPath;
 		this.uploadStatus = UploadStatus.UPLOADING;
 		this.viewCount = 0L;
+		this.resolutions = resolutions;
 		this.category = category;
 		this.tags = tags;
 		this.likeCount = 0L;
 		this.dislikeCount = 0L;
 	}
 
-	public static Video createVideo(Member member, String title, String description, String originalFileName,
+	public static Video createVideoMetadata(Member member, String title, String description, List<String> resolutions,
 		Category category, List<String> tags) {
 
-		return new Video(member, title, description, originalFileName, null, null, category, tags);
+		return new Video(member, title, description, null, null, null, resolutions, category, tags);
+	}
+
+	public void updateVideoFileInfo(String originalFileName, String filePath, UploadStatus uploadStatus) {
+
+		this.originalFileName = originalFileName;
+		this.filePath = filePath;
+		this.uploadStatus = uploadStatus;
 	}
 
 	public void updateUploadStatus(UploadStatus uploadStatus) {
