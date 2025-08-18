@@ -11,21 +11,22 @@ import org.springframework.transaction.annotation.Transactional;
 import com.vidcentral.api.application.comment.CommentReadService;
 import com.vidcentral.api.application.comment.mapper.CommentMapper;
 import com.vidcentral.api.application.history.ViewingHistoryWriteService;
+import com.vidcentral.api.application.member.MemberReadService;
 import com.vidcentral.api.application.recommend.RecommendationService;
 import com.vidcentral.api.application.video.mapper.VideoMapper;
 import com.vidcentral.api.application.video.validator.VideoValidator;
 import com.vidcentral.api.domain.comment.entity.Comment;
+import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.comment.response.CommentResponse;
 import com.vidcentral.api.dto.pagination.PagedResponse;
 import com.vidcentral.api.dto.pagination.PaginationInfo;
+import com.vidcentral.api.dto.video.request.CreateVideoRequest;
 import com.vidcentral.api.dto.video.request.UpdateVideoRequest;
-import com.vidcentral.api.dto.video.request.UploadVideoRequest;
+import com.vidcentral.api.dto.video.request.UploadChunkRequest;
 import com.vidcentral.api.dto.video.response.VideoDetailResponse;
 import com.vidcentral.api.dto.video.response.VideoResponse;
 import com.vidcentral.global.auth.model.AuthMember;
-import com.vidcentral.global.error.exception.UnauthorizedException;
-import com.vidcentral.global.error.model.ErrorMessage;
 
 import lombok.RequiredArgsConstructor;
 
@@ -40,11 +41,20 @@ public class VideoService {
 	private final RecommendationService recommendationService;
 	private final CommentReadService commentReadService;
 	private final ViewingHistoryWriteService viewingHistoryWriteService;
+	private final MemberReadService memberReadService;
 
 	@Transactional
-	public void uploadVideo(AuthMember authMember, UploadVideoRequest uploadVideoRequest) {
-		videoValidator.validateUploadVideoRequest(uploadVideoRequest);
-		videoWriteService.uploadVideo(authMember, uploadVideoRequest);
+	public Long saveVideo(AuthMember authMember, CreateVideoRequest createVideoRequest) {
+		final Member member = memberReadService.findMemberById(authMember.id());
+		return videoWriteService.saveVideoMetadata(member, createVideoRequest).getId();
+	}
+
+	@Transactional
+	public void uploadVideoChunk(Long videoId, AuthMember authMember, UploadChunkRequest uploadChunkRequest) {
+		final Video video = videoReadService.findVideoById(videoId);
+		videoValidator.validateChunkIntegrity(uploadChunkRequest.chunkNumber(), uploadChunkRequest.totalChunks());
+		videoValidator.validateVideoOwner(video.getMember().getId(), authMember.id());
+		videoWriteService.uploadVideoChunk(video, uploadChunkRequest);
 	}
 
 	public PagedResponse<VideoResponse> getRecommendedVideosForUser(AuthMember authMember) {
@@ -82,20 +92,14 @@ public class VideoService {
 	@Transactional
 	public void updateVideo(Long videoId, AuthMember authMember, UpdateVideoRequest updateVideoRequest) {
 		final Video video = videoReadService.findVideoById(videoId);
-		validateVideoOwner(video.getMember().getId(), authMember.id());
+		videoValidator.validateVideoOwner(video.getMember().getId(), authMember.id());
 		videoWriteService.updateVideo(video, updateVideoRequest);
 	}
 
 	@Transactional
 	public void deleteVideo(Long videoId, AuthMember authMember) {
 		final Video video = videoReadService.findVideoById(videoId);
-		validateVideoOwner(video.getMember().getId(), authMember.id());
+		videoValidator.validateVideoOwner(video.getMember().getId(), authMember.id());
 		videoWriteService.deleteVideo(videoId);
-	}
-
-	private void validateVideoOwner(Long videoOwnerId, Long authMemberId) {
-		if (!videoOwnerId.equals(authMemberId)) {
-			throw new UnauthorizedException(ErrorMessage.FORBIDDEN_VIDEO_MODIFY);
-		}
 	}
 }
