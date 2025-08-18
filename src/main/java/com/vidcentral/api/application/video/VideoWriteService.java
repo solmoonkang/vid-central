@@ -2,14 +2,13 @@ package com.vidcentral.api.application.video;
 
 import org.springframework.stereotype.Service;
 
-import com.vidcentral.api.application.member.MemberReadService;
 import com.vidcentral.api.application.video.upload.VideoUploadManager;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
+import com.vidcentral.api.dto.video.request.CreateVideoRequest;
 import com.vidcentral.api.dto.video.request.UpdateVideoRequest;
-import com.vidcentral.api.dto.video.request.UploadVideoRequest;
-import com.vidcentral.global.auth.model.AuthMember;
+import com.vidcentral.api.dto.video.request.UploadChunkRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,20 +16,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VideoWriteService {
 
-	private final MemberReadService memberReadService;
 	private final VideoUploadManager videoUploadManager;
 	private final VideoRepository videoRepository;
 
-	public void uploadVideo(AuthMember authMember, UploadVideoRequest uploadVideoRequest) {
-		final Member member = memberReadService.getMemberById(authMember.id());
+	public Video saveVideoMetadata(Member member, CreateVideoRequest createVideoRequest) {
+		final Video video = Video.createVideoMetadata(
+			member, createVideoRequest.title(), createVideoRequest.description(), createVideoRequest.resolutions(),
+			createVideoRequest.category(), createVideoRequest.tags());
 
-		final String originalFileName = getOriginalFileName(uploadVideoRequest);
-		final Video video = Video.createVideo(
-			member, uploadVideoRequest.title(), uploadVideoRequest.description(), originalFileName,
-			uploadVideoRequest.category(), uploadVideoRequest.tags());
-		videoRepository.save(video);
+		return videoRepository.save(video);
+	}
 
-		videoUploadManager.processVideoUpload(video.getId(), uploadVideoRequest);
+	public void uploadVideoChunk(Video video, UploadChunkRequest uploadChunkRequest) {
+		videoUploadManager.processVideoChunkUpload(video, uploadChunkRequest);
 	}
 
 	public void incrementViewCount(Long videoId) {
@@ -44,12 +42,5 @@ public class VideoWriteService {
 
 	public void deleteVideo(Long videoId) {
 		videoRepository.deleteById(videoId);
-	}
-
-	private String getOriginalFileName(UploadVideoRequest uploadVideoRequest) {
-		if (uploadVideoRequest.originalFileName() == null || uploadVideoRequest.originalFileName().trim().isEmpty())
-			return uploadVideoRequest.videoFile().getOriginalFilename();
-
-		return uploadVideoRequest.originalFileName();
 	}
 }
