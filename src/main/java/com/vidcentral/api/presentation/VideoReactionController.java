@@ -28,7 +28,7 @@ public class VideoReactionController {
 	private final VideoReactionService videoReactionService;
 
 	@PatchMapping
-	@Operation(summary = "비디오 반응 토글", description = "특정 비디오에 좋아요 또는 싫어요 반응을 등록/취소/변경합니다.")
+	@Operation(summary = "비디오 반응 토글", description = "특정 비디오에 좋아요 또는 싫어요 반응을 등록, 취소, 변경합니다.")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "204", description = "🎉 비디오 반응 적용 성공"),
 		@ApiResponse(responseCode = "401", description = "🔒 만료되었거나 위조된 토큰"),
