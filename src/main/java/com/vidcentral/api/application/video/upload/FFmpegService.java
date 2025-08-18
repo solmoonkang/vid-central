@@ -17,11 +17,6 @@ import com.vidcentral.global.error.model.ErrorMessage;
 @Service
 public class FFmpegService {
 
-	/**
-	 * FFmpegService는 비디오 파일 자체를 가공하는 역할을 담당한다.
-	 * 이 클래스는 외부 프로그램인 FFmpeg을 활용하여 영상 인코딩, 압축, 그리고 썸네일 생성과 같은 시간이 오래 걸리는 작업을 수행한다.
-	 */
-
 	public List<String> processVideo(String inputFilePath, List<String> resolutions, String baseFileName) {
 		return resolutions.stream()
 			.map(resolution -> encodeVideo(inputFilePath, resolution, baseFileName))
