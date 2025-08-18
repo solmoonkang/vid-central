@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,8 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vidcentral.api.application.video.VideoService;
 import com.vidcentral.api.dto.pagination.PagedResponse;
+import com.vidcentral.api.dto.video.request.CreateVideoRequest;
 import com.vidcentral.api.dto.video.request.UpdateVideoRequest;
-import com.vidcentral.api.dto.video.request.UploadVideoRequest;
+import com.vidcentral.api.dto.video.request.UploadChunkRequest;
 import com.vidcentral.api.dto.video.response.VideoDetailResponse;
 import com.vidcentral.api.dto.video.response.VideoResponse;
 import com.vidcentral.global.auth.annotation.Auth;
@@ -43,21 +45,38 @@ public class VideoController {
 
 	private final VideoService videoService;
 
-	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping("/metadata")
 	@ResponseStatus(HttpStatus.CREATED)
-	@Operation(summary = "비디오 업로드", description = "사용자 인증 후 비디오를 업로드합니다.")
+	@Operation(summary = "비디오 메타데이터 업로드", description = "사용자 인증 후 비디오 파일을 제외한 메타데이터를 업로드합니다.")
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "201", description = "🎉 비디오 업로드 성공"),
+		@ApiResponse(responseCode = "201", description = "🎉 비디오 메타데이터 업로드 성공"),
 		@ApiResponse(responseCode = "400", description = "❌ 유효성 검사 실패"),
 		@ApiResponse(responseCode = "401", description = "🔒 만료되었거나 위조된 토큰"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
-	public ResponseEntity<String> uploadVideo(
+	public ResponseEntity<Long> saveVideo(
 		@Auth AuthMember authMember,
-		@Valid @ModelAttribute UploadVideoRequest uploadVideoRequest) {
+		@Valid @RequestBody CreateVideoRequest createVideoRequest) {
 
-		videoService.uploadVideo(authMember, uploadVideoRequest);
-		return ResponseEntity.ok().body("[✅ SUCCESS] 성공적으로 비디오를 업로드했습니다.");
+		return ResponseEntity.ok().body(videoService.saveVideo(authMember, createVideoRequest));
+	}
+
+	@PatchMapping(value = "/chunks/{videoId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(summary = "비디오 청크 업로드", description = "생성된 비디오 ID에 파일 청크를 전송합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "🎉 청크 업로드 성공"),
+		@ApiResponse(responseCode = "400", description = "❌ 유효성 검사 실패"),
+		@ApiResponse(responseCode = "401", description = "🔒 만료되었거나 위조된 토큰"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<String> uploadVideoChunk(
+		@PathVariable Long videoId,
+		@Auth AuthMember authMember,
+		@Valid @ModelAttribute UploadChunkRequest uploadVideoRequest) {
+
+		videoService.uploadVideoChunk(videoId, authMember, uploadVideoRequest);
+		return ResponseEntity.ok().body("[✅ SUCCESS] 성공적으로 비디오 청크를 업로드했습니다.");
 	}
 
 	@GetMapping("/recommend")
