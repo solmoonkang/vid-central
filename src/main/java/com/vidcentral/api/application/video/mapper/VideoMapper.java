@@ -4,10 +4,9 @@ import java.util.List;
 
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.comment.response.CommentResponse;
-import com.vidcentral.api.dto.video.request.UploadVideoRequest;
 import com.vidcentral.api.dto.video.response.VideoDetailResponse;
-import com.vidcentral.api.dto.video.response.VideoResponse;
 import com.vidcentral.api.dto.video.response.VideoProcessingMessage;
+import com.vidcentral.api.dto.video.response.VideoResponse;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -15,11 +14,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class VideoMapper {
 
-	public static VideoProcessingMessage toVideoProcessingMessage(Long videoId, String filePath,
-		UploadVideoRequest uploadVideoRequest, List<String> resolutions) {
+	public static VideoProcessingMessage toVideoProcessingMessage(Video video, String filePath,
+		String originalFileName, List<String> resolutions) {
 
-		return new VideoProcessingMessage(videoId, filePath, uploadVideoRequest.originalFileName(), resolutions,
-			uploadVideoRequest.category(), uploadVideoRequest.tags());
+		return new VideoProcessingMessage(video.getId(), filePath, originalFileName, resolutions,
+			video.getCategory(), video.getTags());
 	}
 
 	public static VideoResponse toVideoResponse(Video video) {
