@@ -18,6 +18,7 @@ public enum ErrorMessage {
 	PASSWORD_MISMATCH("[❎ ERROR] 비밀번호와 확인 비밀번호가 일치하지 않습니다."),
 	INVALID_FILE("[❎ ERROR] 파일이 비어있습니다."),
 	INVALID_RESOLUTION("[❎ ERROR] 지원하지 않는 해상도입니다."),
+	INVALID_CHUNK_NUMBER_RANGE("[❎ ERROR] 청크 번호는 전체 청크 수를 초과할 수 없습니다."),
 
 	TOKEN_EXPIRED("[❎ ERROR] 이미 만료된 토큰입니다."),
 	UNAUTHORIZED_MEMBER("[❎ ERROR] 인증되지 않은 사용자입니다."),
@@ -37,6 +38,7 @@ public enum ErrorMessage {
 
 	MESSAGE_SEND_ERROR("[❎ ERROR] 메시지 큐 전송에 실패했습니다."),
 	FILE_SAVE_ERROR("[❎ ERROR] 임시 파일 저장에 실패했습니다."),
+	FILE_MERGE_ERROR("[❎ ERROR] 임시 파일 병합에 실패했습니다."),
 	FILE_DELETE_ERROR("[❎ ERROR] 파일 삭제에 실패했습니다."),
 	VIDEO_PROCESSING_ERROR("[❎ ERROR] FFmpeg 명령어 실행에 실패했습니다."),
 	UNKNOWN_SERVER_ERROR("[❎ ERROR] 서버에서 알 수 없는 에러가 발생했습니다.");
