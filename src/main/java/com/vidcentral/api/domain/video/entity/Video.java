@@ -124,12 +124,8 @@ public class Video extends BaseTimeEntity {
 		this.uploadStatus = uploadStatus;
 	}
 
-	public void updateOriginalFileName(String originalFileName) {
-		this.originalFileName = originalFileName;
-	}
-
-	public void updateFilePath(List<String> filePaths) {
-		this.filePath = String.join(",", filePaths);
+	public void updateFilePath(String filePath) {
+		this.filePath = filePath;
 	}
 
 	public void updateThumbnailPath(String thumbnailPath) {
