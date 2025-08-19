@@ -14,10 +14,10 @@ import com.vidcentral.api.application.history.ViewingHistoryWriteService;
 import com.vidcentral.api.application.member.MemberReadService;
 import com.vidcentral.api.application.recommend.RecommendationService;
 import com.vidcentral.api.application.video.mapper.VideoMapper;
-import com.vidcentral.api.application.video.validator.VideoValidator;
 import com.vidcentral.api.domain.comment.entity.Comment;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
+import com.vidcentral.api.domain.video.repository.VideoUploadRedisRepository;
 import com.vidcentral.api.dto.comment.response.CommentResponse;
 import com.vidcentral.api.dto.pagination.PagedResponse;
 import com.vidcentral.api.dto.pagination.PaginationInfo;
@@ -27,6 +27,9 @@ import com.vidcentral.api.dto.video.request.UploadChunkRequest;
 import com.vidcentral.api.dto.video.response.VideoDetailResponse;
 import com.vidcentral.api.dto.video.response.VideoResponse;
 import com.vidcentral.global.auth.model.AuthMember;
+import com.vidcentral.global.error.exception.BadRequestException;
+import com.vidcentral.global.error.exception.UnauthorizedException;
+import com.vidcentral.global.error.model.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,13 +38,13 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class VideoService {
 
-	private final VideoValidator videoValidator;
 	private final VideoWriteService videoWriteService;
 	private final VideoReadService videoReadService;
 	private final RecommendationService recommendationService;
 	private final CommentReadService commentReadService;
 	private final ViewingHistoryWriteService viewingHistoryWriteService;
 	private final MemberReadService memberReadService;
+	private final VideoUploadRedisRepository videoUploadRedisRepository;
 
 	@Transactional
 	public Long saveVideo(AuthMember authMember, CreateVideoRequest createVideoRequest) {
@@ -52,8 +55,13 @@ public class VideoService {
 	@Transactional
 	public void uploadVideoChunk(Long videoId, AuthMember authMember, UploadChunkRequest uploadChunkRequest) {
 		final Video video = videoReadService.findVideoById(videoId);
-		videoValidator.validateChunkIntegrity(uploadChunkRequest.chunkNumber(), uploadChunkRequest.totalChunks());
-		videoValidator.validateVideoOwner(video.getMember().getId(), authMember.id());
+		validateVideoOwner(video.getMember().getId(), authMember.id());
+
+		final Optional<Integer> storedTotalChunks = videoUploadRedisRepository.getTotalChunks(videoId);
+		validateChunkIntegrity(uploadChunkRequest.chunkNumber(), uploadChunkRequest.totalChunks());
+		validateTotalChunks(storedTotalChunks, uploadChunkRequest.totalChunks());
+		validateChunkNotAlreadyUploaded(videoId, uploadChunkRequest.chunkNumber());
+
 		videoWriteService.uploadVideoChunk(video, uploadChunkRequest);
 	}
 
@@ -92,14 +100,38 @@ public class VideoService {
 	@Transactional
 	public void updateVideo(Long videoId, AuthMember authMember, UpdateVideoRequest updateVideoRequest) {
 		final Video video = videoReadService.findVideoById(videoId);
-		videoValidator.validateVideoOwner(video.getMember().getId(), authMember.id());
+		validateVideoOwner(video.getMember().getId(), authMember.id());
 		videoWriteService.updateVideo(video, updateVideoRequest);
 	}
 
 	@Transactional
 	public void deleteVideo(Long videoId, AuthMember authMember) {
 		final Video video = videoReadService.findVideoById(videoId);
-		videoValidator.validateVideoOwner(video.getMember().getId(), authMember.id());
+		validateVideoOwner(video.getMember().getId(), authMember.id());
 		videoWriteService.deleteVideo(videoId);
+	}
+
+	private void validateVideoOwner(Long videoOwnerId, Long authMemberId) {
+		if (!videoOwnerId.equals(authMemberId)) {
+			throw new UnauthorizedException(ErrorCode.FORBIDDEN_VIDEO_MODIFY);
+		}
+	}
+
+	private void validateChunkIntegrity(int chunkNumber, int totalChunks) {
+		if (chunkNumber > totalChunks) {
+			throw new BadRequestException(ErrorCode.INVALID_CHUNK_NUMBER_RANGE);
+		}
+	}
+
+	private void validateTotalChunks(Optional<Integer> totalChunksOfFirstRequest, int totalChunksOfCurrentRequest) {
+		if (totalChunksOfFirstRequest.isPresent() && totalChunksOfFirstRequest.get() != totalChunksOfCurrentRequest) {
+			throw new BadRequestException(ErrorCode.TOTAL_CHUNKS_MISMATCH);
+		}
+	}
+
+	private void validateChunkNotAlreadyUploaded(Long videoId, int chunkNumber) {
+		if (videoUploadRedisRepository.hasChunk(videoId, chunkNumber)) {
+			throw new BadRequestException(ErrorCode.DUPLICATE_CHUNK_UPLOAD);
+		}
 	}
 }
