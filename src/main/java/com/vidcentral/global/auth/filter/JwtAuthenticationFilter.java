@@ -10,7 +10,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import com.vidcentral.global.auth.model.AuthMember;
 import com.vidcentral.global.auth.provider.JwtProvider;
 import com.vidcentral.global.error.exception.UnauthorizedException;
-import com.vidcentral.global.error.model.ErrorMessage;
+import com.vidcentral.global.error.model.ErrorCode;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		try {
 			final String accessToken = jwtProvider.extractToken(httpServletRequest);
 			if (!StringUtils.hasText(accessToken) && !jwtProvider.validateToken(accessToken)) {
-				throw new UnauthorizedException(ErrorMessage.TOKEN_EXPIRED);
+				throw new UnauthorizedException(ErrorCode.TOKEN_EXPIRED);
 			}
 
 			setAuthentication(accessToken);

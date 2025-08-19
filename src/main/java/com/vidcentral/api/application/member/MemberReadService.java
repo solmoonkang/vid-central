@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.member.repository.MemberRepository;
 import com.vidcentral.global.error.exception.NotFoundException;
-import com.vidcentral.global.error.model.ErrorMessage;
+import com.vidcentral.global.error.model.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,11 +17,11 @@ public class MemberReadService {
 
 	public Member findMemberById(Long id) {
 		return memberRepository.findById(id)
-			.orElseThrow(() -> new NotFoundException(ErrorMessage.MEMBER_NOT_FOUND));
+			.orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 	}
 
 	public Member findMemberByEmail(String email) {
 		return memberRepository.findByEmail(email)
-			.orElseThrow(() -> new NotFoundException(ErrorMessage.MEMBER_NOT_FOUND));
+			.orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 	}
 }

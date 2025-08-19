@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.vidcentral.api.domain.history.entity.ViewingHistory;
 import com.vidcentral.api.domain.history.repository.ViewingHistoryRepository;
 import com.vidcentral.global.error.exception.NotFoundException;
-import com.vidcentral.global.error.model.ErrorMessage;
+import com.vidcentral.global.error.model.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +29,6 @@ public class ViewingHistoryReadService {
 
 	public ViewingHistory findViewingHistory(Long memberId, Long videoId) {
 		return viewingHistoryRepository.findByMemberIdAndVideoId(memberId, videoId)
-			.orElseThrow(() -> new NotFoundException(ErrorMessage.VIEWING_HISTORY_NOT_FOUND));
+			.orElseThrow(() -> new NotFoundException(ErrorCode.VIEWING_HISTORY_NOT_FOUND));
 	}
 }

@@ -10,7 +10,7 @@ import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.model.Category;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
 import com.vidcentral.global.error.exception.NotFoundException;
-import com.vidcentral.global.error.model.ErrorMessage;
+import com.vidcentral.global.error.model.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +22,7 @@ public class VideoReadService {
 
 	public Video findVideoById(Long videoId) {
 		return videoRepository.findById(videoId)
-			.orElseThrow(() -> new NotFoundException(ErrorMessage.VIDEO_NOT_FOUND));
+			.orElseThrow(() -> new NotFoundException(ErrorCode.VIDEO_NOT_FOUND));
 	}
 
 	public List<Video> findRecommendedVideoBy(List<Category> categories, List<String> tags, List<Long> videoIds, Pageable pageable) {

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.vidcentral.api.domain.comment.entity.Comment;
 import com.vidcentral.api.domain.comment.repository.CommentRepository;
 import com.vidcentral.global.error.exception.NotFoundException;
-import com.vidcentral.global.error.model.ErrorMessage;
+import com.vidcentral.global.error.model.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +23,6 @@ public class CommentReadService {
 
 	public Comment findCommentBy(Long memberId, Long videoId) {
 		return commentRepository.findByMemberIdAndVideoId(memberId, videoId)
-			.orElseThrow(() -> new NotFoundException(ErrorMessage.COMMENT_NOT_FOUND));
+			.orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
 	}
 }

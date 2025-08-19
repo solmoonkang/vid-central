@@ -12,7 +12,7 @@ import com.vidcentral.api.dto.comment.request.CreateCommentRequest;
 import com.vidcentral.api.dto.comment.request.UpdateCommentRequest;
 import com.vidcentral.global.auth.model.AuthMember;
 import com.vidcentral.global.error.exception.UnauthorizedException;
-import com.vidcentral.global.error.model.ErrorMessage;
+import com.vidcentral.global.error.model.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -54,7 +54,7 @@ public class CommentService {
 
 	private void validateCommentOwner(Long commentOwnerId, Long authMemberId) {
 		if (!commentOwnerId.equals(authMemberId)) {
-			throw new UnauthorizedException(ErrorMessage.FORBIDDEN_COMMENT_MODIFY);
+			throw new UnauthorizedException(ErrorCode.FORBIDDEN_COMMENT_MODIFY);
 		}
 	}
 }
