@@ -1,8 +1,8 @@
 package com.vidcentral.api.application.video.upload;
 
 import static com.vidcentral.global.common.util.MessageQueueConstant.*;
+import static com.vidcentral.global.common.util.VideoConstant.*;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -32,17 +32,18 @@ public class VideoProcessingWorker {
 	public void handleVideoProcessing(VideoProcessingMessage videoProcessingMessage) {
 		final Video video = videoReadService.findVideoById(videoProcessingMessage.videoId());
 		final String originalFilePath = videoProcessingMessage.filePath();
+		final String baseFileName = UUID.randomUUID().toString();
+		final String outputDirectory = PROCESSED_VIDEO_PATH + baseFileName;
 
 		try {
 			video.updateUploadStatus(UploadStatus.PROCESSING);
+			fileStorageService.createDirectories(outputDirectory);
 
-			final String baseFileName = UUID.randomUUID().toString();
-			final List<String> processedFilePaths = fFmpegService.processVideo(
+			final String masterM3u8Path = fFmpegService.processVideo(
 				originalFilePath, videoProcessingMessage.resolutions(), baseFileName);
 			final String thumbnailPath = fFmpegService.createThumbnail(originalFilePath, baseFileName);
 
-			video.updateOriginalFileName(videoProcessingMessage.originalFileName());
-			video.updateFilePath(processedFilePaths);
+			video.updateFilePath(masterM3u8Path);
 			video.updateThumbnailPath(thumbnailPath);
 			video.updateUploadStatus(UploadStatus.COMPLETE);
 		} catch (Exception e) {
