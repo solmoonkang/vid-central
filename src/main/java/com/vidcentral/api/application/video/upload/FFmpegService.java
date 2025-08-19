@@ -3,71 +3,99 @@ package com.vidcentral.api.application.video.upload;
 import static com.vidcentral.global.common.util.VideoConstant.*;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.vidcentral.global.error.exception.BadRequestException;
-import com.vidcentral.global.error.exception.VIDCentralException;
-import com.vidcentral.global.error.model.ErrorMessage;
+import com.vidcentral.global.error.exception.InternalServerException;
+import com.vidcentral.global.error.model.ErrorCode;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class FFmpegService {
 
-	public List<String> processVideo(String inputFilePath, List<String> resolutions, String baseFileName) {
-		return resolutions.stream()
-			.map(resolution -> encodeVideo(inputFilePath, resolution, baseFileName))
-			.toList();
+	public String processVideo(String inputFilePath, List<String> resolutions, String baseFileName) {
+		final String outputDirectory = PROCESSED_VIDEO_PATH + baseFileName;
+		final List<String> command = buildHLSCommand(inputFilePath, outputDirectory, resolutions);
+		executeCommand(command, ErrorCode.VIDEO_PROCESSING_FAILED);
+		return Paths.get(outputDirectory, MASTER_M3U8_FILENAME).toString();
 	}
 
 	public String createThumbnail(String inputFilePath, String baseFileName) {
 		final String thumbnailFilePath = THUMBNAIL_PATH + baseFileName + THUMBNAIL_EXTENSION;
-
-		List<String> command = new ArrayList<>(Arrays.asList(FFMPEG_EXECUTABLE_PATH, "-i", inputFilePath));
-		command.addAll(Arrays.asList(THUMBNAIL_OPTIONS));
-		command.add(thumbnailFilePath);
-
-		ProcessBuilder processBuilder = new ProcessBuilder(command);
-		executeCommand(processBuilder, "썸네일 생성에 실패했습니다.");
+		final List<String> commands = buildCommand(inputFilePath, thumbnailFilePath);
+		executeCommand(commands, ErrorCode.THUMBNAIL_CREATION_FAILED);
 		return thumbnailFilePath;
 	}
 
-	private String encodeVideo(String inputFilePath, String resolution, String baseFileName) {
-		final String outputFileName = getOutputFileName(baseFileName, resolution);
-		final String outputFilePath = PROCESSED_VIDEO_PATH + outputFileName;
+	private List<String> buildCommand(String inputFilePath, String outputFilePaths) {
+		final List<String> commands = new ArrayList<>();
+		commands.add(FFMPEG_EXECUTABLE_PATH);
+		commands.addAll(Arrays.asList(INPUT_OPTIONS));
+		commands.add(inputFilePath);
+		commands.addAll(Arrays.asList(THUMBNAIL_OPTIONS));
+		commands.add(outputFilePaths);
 
-		List<String> command = new ArrayList<>(Arrays.asList(FFMPEG_EXECUTABLE_PATH, "-i", inputFilePath));
-		command.addAll(Arrays.asList(VIDEO_ENCODING_OPTIONS));
-		command.add(outputFilePath);
-
-		ProcessBuilder processBuilder = new ProcessBuilder(command);
-		executeCommand(processBuilder, "FFmpeg 인코딩에 실패했습니다.");
-		return outputFilePath;
+		return commands;
 	}
 
-	private String getOutputFileName(String baseFileName, String resolution) {
-		return switch (resolution) {
-			case RESOLUTION_480P_VALUE -> baseFileName + RESOLUTION_480P_SUFFIX;
-			case RESOLUTION_720P_VALUE -> baseFileName + RESOLUTION_720P_SUFFIX;
-			case RESOLUTION_1080P_VALUE -> baseFileName + RESOLUTION_1080P_SUFFIX;
-			default -> throw new BadRequestException(ErrorMessage.INVALID_RESOLUTION);
-		};
+	private List<String> buildHLSCommand(String inputFilePath, String outputDirectory, List<String> resolutions) {
+		final List<String> commands = new ArrayList<>();
+		commands.add(FFMPEG_EXECUTABLE_PATH);
+		commands.addAll(Arrays.asList(GLOBAL_OPTIONS));
+		commands.addAll(Arrays.asList(INPUT_OPTIONS));
+		commands.add(inputFilePath);
+
+		resolutions.forEach(resolution -> addResolutionCommands(commands, resolution, outputDirectory));
+		addStreamMapCommands(commands, resolutions);
+
+		return commands;
 	}
 
-	private void executeCommand(ProcessBuilder processBuilder, String errorMessage) {
+	private void addResolutionCommands(List<String> commands, String resolution, String outputDirectory) {
+		final String hlsSegmentPath = Paths.get(outputDirectory, resolution + "_%03d.ts").toString();
+		final String hlsPlaylistPath = Paths.get(outputDirectory, resolution + ".m3u8").toString();
+
+		commands.addAll(Arrays.asList(
+			"-vf", "scale=-2:" + getHeight(resolution),
+			"-c:v", VIDEO_CODEC, "-c:a", AUDIO_CODEC, "-b:a", AUDIO_BITRATE,
+			"-hls_time", HLS_TIME,
+			"-hls_playlist_type", HLS_PLAYLIST_TYPE,
+			"-hls_segment_filename", hlsSegmentPath,
+			"-f", HLS_FORMAT, hlsPlaylistPath
+		));
+	}
+
+	private void addStreamMapCommands(List<String> commands, List<String> resolutions) {
+		commands.addAll(Arrays.asList(
+			VIDEO_STREAM_MAP_OPTIONS[0], VIDEO_STREAM_MAP_OPTIONS[1],
+			"-var_stream_map", buildStreamMap(resolutions),
+			"-master_pl_name", MASTER_M3U8_FILENAME
+		));
+	}
+
+	private String buildStreamMap(List<String> resolutions) {
+		return resolutions.stream()
+			.map(resolution -> "v:" + resolutions.indexOf(resolution) + ",a:" + resolutions.indexOf(resolution))
+			.collect(Collectors.joining(" "));
+	}
+
+	private void executeCommand(List<String> command, ErrorCode errorCode) {
 		try {
-			Process process = processBuilder.start();
-			int exitCode = process.waitFor();
+			final ProcessBuilder processBuilder = new ProcessBuilder(command).inheritIO();
+			final Process process = processBuilder.start();
 
-			if (exitCode != 0) {
-				String errorOutput = new String(process.getErrorStream().readAllBytes(), StandardCharsets.UTF_8);
-				throw new RuntimeException(errorMessage + ": " + errorOutput);
-			}
+			final int exitCode = process.waitFor();
+			if (exitCode != 0)
+				throw new InternalServerException(errorCode);
 		} catch (IOException | InterruptedException e) {
-			throw new VIDCentralException(ErrorMessage.VIDEO_PROCESSING_ERROR);
+			throw new InternalServerException(errorCode);
 		}
 	}
 }
