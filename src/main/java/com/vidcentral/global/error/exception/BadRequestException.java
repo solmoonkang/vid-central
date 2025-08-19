@@ -1,10 +1,16 @@
 package com.vidcentral.global.error.exception;
 
-import com.vidcentral.global.error.model.ErrorMessage;
+import com.vidcentral.global.error.model.ErrorCode;
 
-public class BadRequestException extends VIDCentralException {
+import lombok.Getter;
 
-	public BadRequestException(ErrorMessage errorMessage) {
-		super(errorMessage);
+@Getter
+public class BadRequestException extends RuntimeException {
+
+	private final ErrorCode errorCode;
+
+	public BadRequestException(ErrorCode errorCode, Object... args) {
+		super(errorCode.getFormattedMessage(args));
+		this.errorCode = errorCode;
 	}
 }

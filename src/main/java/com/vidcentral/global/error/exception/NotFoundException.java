@@ -1,10 +1,16 @@
 package com.vidcentral.global.error.exception;
 
-import com.vidcentral.global.error.model.ErrorMessage;
+import com.vidcentral.global.error.model.ErrorCode;
 
-public class NotFoundException extends VIDCentralException {
+import lombok.Getter;
 
-	public NotFoundException(ErrorMessage errorMessage) {
-		super(errorMessage);
+@Getter
+public class NotFoundException extends RuntimeException {
+
+	private final ErrorCode errorCode;
+
+	public NotFoundException(ErrorCode errorCode, Object... args) {
+		super(errorCode.getFormattedMessage(args));
+		this.errorCode = errorCode;
 	}
 }

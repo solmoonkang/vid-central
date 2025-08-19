@@ -1,10 +1,16 @@
 package com.vidcentral.global.error.exception;
 
-import com.vidcentral.global.error.model.ErrorMessage;
+import com.vidcentral.global.error.model.ErrorCode;
 
-public class UnauthorizedException extends VIDCentralException {
+import lombok.Getter;
 
-	public UnauthorizedException(ErrorMessage errorMessage) {
-		super(errorMessage);
+@Getter
+public class UnauthorizedException extends RuntimeException {
+
+	private final ErrorCode errorCode;
+
+	public UnauthorizedException(ErrorCode errorCode, Object... args) {
+		super(errorCode.getFormattedMessage(args));
+		this.errorCode = errorCode;
 	}
 }
