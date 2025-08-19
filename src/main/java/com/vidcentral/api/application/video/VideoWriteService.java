@@ -2,7 +2,7 @@ package com.vidcentral.api.application.video;
 
 import org.springframework.stereotype.Service;
 
-import com.vidcentral.api.application.video.upload.VideoUploadManager;
+import com.vidcentral.api.application.video.upload.VideoUploadService;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VideoWriteService {
 
-	private final VideoUploadManager videoUploadManager;
+	private final VideoUploadService videoUploadService;
 	private final VideoRepository videoRepository;
 
 	public Video saveVideoMetadata(Member member, CreateVideoRequest createVideoRequest) {
@@ -28,7 +28,7 @@ public class VideoWriteService {
 	}
 
 	public void uploadVideoChunk(Video video, UploadChunkRequest uploadChunkRequest) {
-		videoUploadManager.processVideoChunkUpload(video, uploadChunkRequest);
+		videoUploadService.handleChunkUpload(video, uploadChunkRequest);
 	}
 
 	public void incrementViewCount(Long videoId) {
