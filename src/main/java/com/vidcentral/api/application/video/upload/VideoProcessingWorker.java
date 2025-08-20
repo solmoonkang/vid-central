@@ -39,7 +39,7 @@ public class VideoProcessingWorker {
 			video.updateUploadStatus(UploadStatus.PROCESSING);
 			fileStorageService.createDirectories(outputDirectory);
 
-			final String masterM3u8Path = fFmpegService.processVideo(
+			final String masterM3u8Path = fFmpegService.transcodeVideoToHLS(
 				originalFilePath, videoProcessingMessage.resolutions(), baseFileName);
 			final String thumbnailPath = fFmpegService.createThumbnail(originalFilePath, baseFileName);
 
