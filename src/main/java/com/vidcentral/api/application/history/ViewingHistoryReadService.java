@@ -2,6 +2,7 @@ package com.vidcentral.api.application.history;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class ViewingHistoryReadService {
 
 	private final ViewingHistoryRepository viewingHistoryRepository;
 
+	@Cacheable(value = "recentHistory", key = "#memberId")
 	public List<ViewingHistory> findRecentViewingHistoriesBy(Long memberId, Pageable pageable) {
 		return viewingHistoryRepository.findWithVideoByMemberId(memberId, pageable);
 	}

@@ -1,5 +1,6 @@
 package com.vidcentral.api.application.history;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import com.vidcentral.api.application.member.MemberReadService;
@@ -20,9 +21,10 @@ public class ViewingHistoryWriteService {
 	private final VideoReadService videoReadService;
 	private final ViewingHistoryRepository viewingHistoryRepository;
 
+	@CacheEvict(value = "recentHistory", key = "#memberId")
 	public void saveViewingHistory(Long memberId, Long videoId) {
-		final Member member = memberReadService.getMemberById(memberId);
-		final Video video = videoReadService.getVideoById(videoId);
+		final Member member = memberReadService.findMemberById(memberId);
+		final Video video = videoReadService.findVideoById(videoId);
 		final ViewingHistory viewingHistory = ViewingHistory.createViewingHistory(member, video);
 		viewingHistoryRepository.save(viewingHistory);
 	}
