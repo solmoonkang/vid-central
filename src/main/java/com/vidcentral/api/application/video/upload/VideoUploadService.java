@@ -17,6 +17,7 @@ import com.vidcentral.api.dto.video.request.UploadChunkRequest;
 import com.vidcentral.api.dto.video.response.VideoProcessingMessage;
 import com.vidcentral.api.infrastructure.queue.MessageQueueSender;
 import com.vidcentral.api.infrastructure.storage.FileStorageService;
+import com.vidcentral.global.common.util.ResolutionOption;
 
 import lombok.RequiredArgsConstructor;
 
@@ -95,7 +96,7 @@ public class VideoUploadService {
 
 	private List<String> getResolutionToProcess(List<String> resolutions) {
 		if (resolutions == null || resolutions.isEmpty())
-			return List.of(RESOLUTION_480P_VALUE);
+			return List.of(ResolutionOption.P480.getValue());
 
 		return resolutions;
 	}
