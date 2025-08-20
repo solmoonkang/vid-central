@@ -26,7 +26,7 @@ repositories {
 
 dependencies {
     // OpenAPI Swagger
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.10'
 
     // Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -38,9 +38,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     // JWT
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.7'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.7'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.7'
 
     // Bean validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -63,6 +63,12 @@ dependencies {
 
     // FFmpeg
     implementation 'net.bramp.ffmpeg:ffmpeg:0.8.0'
+
+    // QueryDSL
+    implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:5.1.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
