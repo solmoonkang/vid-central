@@ -3,6 +3,8 @@ package com.vidcentral.api.application.video;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -84,6 +86,7 @@ public class VideoService {
 	}
 
 	@Transactional
+	@Cacheable(value = "videoDetail", key = "#videoId")
 	public VideoDetailResponse getVideoDetail(Long videoId, AuthMember authMember) {
 		videoWriteService.incrementViewCount(videoId);
 
@@ -98,6 +101,7 @@ public class VideoService {
 	}
 
 	@Transactional
+	@CacheEvict(value = "videoDetail", key = "#videoId")
 	public void updateVideo(Long videoId, AuthMember authMember, UpdateVideoRequest updateVideoRequest) {
 		final Video video = videoReadService.findVideoById(videoId);
 		validateVideoOwner(video.getMember().getId(), authMember.id());
@@ -105,6 +109,7 @@ public class VideoService {
 	}
 
 	@Transactional
+	@CacheEvict(value = "videoDetail", key = "#videoId")
 	public void deleteVideo(Long videoId, AuthMember authMember) {
 		final Video video = videoReadService.findVideoById(videoId);
 		validateVideoOwner(video.getMember().getId(), authMember.id());
