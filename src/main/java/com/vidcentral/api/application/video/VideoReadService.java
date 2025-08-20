@@ -2,6 +2,7 @@ package com.vidcentral.api.application.video;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,10 +26,12 @@ public class VideoReadService {
 			.orElseThrow(() -> new NotFoundException(ErrorCode.VIDEO_NOT_FOUND));
 	}
 
-	public List<Video> findRecommendedVideoBy(List<Category> categories, List<String> tags, List<Long> videoIds, Pageable pageable) {
+	public List<Video> findRecommendedVideoBy(List<Category> categories, List<String> tags, List<Long> videoIds,
+		Pageable pageable) {
 		return videoRepository.findRecommendedVideos(categories, tags, videoIds, pageable);
 	}
 
+	@Cacheable(value = "videoSearch", key = "#keyword + '::' + #pageable.pageNumber")
 	public Page<Video> searchVideos(String keyword, Pageable pageable) {
 		return videoRepository.findByTitleOrNicknameContaining(keyword, pageable);
 	}
