@@ -11,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,7 +19,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "MEMBERS")
+@Table(name = "MEMBERS", indexes = {
+	@Index(name = "idx_member_email", columnList = "email", unique = true),
+	@Index(name = "idx_member_nickname", columnList = "nickname", unique = true)
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
 

@@ -10,6 +10,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -20,10 +21,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(
-	name = "VIEWING_HISTORIES", uniqueConstraints = {
-	@UniqueConstraint(columnNames = {"member_id", "video_id"})
-})
+@Table(name = "VIEWING_HISTORIES",
+	uniqueConstraints = {
+		@UniqueConstraint(columnNames = {"member_id", "video_id"})},
+	indexes = {
+		@Index(name = "idx_history_member_created_at", columnList = "member_id, created_at DESC")
+	})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ViewingHistory extends BaseTimeEntity {
 
