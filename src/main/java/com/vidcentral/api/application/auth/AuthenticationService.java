@@ -26,7 +26,7 @@ public class AuthenticationService {
 
 	@Transactional
 	public TokenResponse loginMember(LoginRequest loginRequest) {
-		final Member member = memberReadService.getMemberByEmail(loginRequest.email());
+		final Member member = memberReadService.findMemberByEmail(loginRequest.email());
 		memberValidator.validateLoginPassword(loginRequest.password(), member.getPassword());
 
 		final String accessToken = generateAccessToken(member);
@@ -41,7 +41,7 @@ public class AuthenticationService {
 		tokenValidator.validateTokenFormat(refreshToken);
 		final AuthMember authMember = jwtProvider.extractAuthMemberFromToken(refreshToken);
 
-		final Member member = memberReadService.getMemberByEmail(authMember.email());
+		final Member member = memberReadService.findMemberByEmail(authMember.email());
 		tokenValidator.validateTokenExistence(member.getRefreshToken(), refreshToken);
 
 		final String newAccessToken = generateAccessToken(member);
