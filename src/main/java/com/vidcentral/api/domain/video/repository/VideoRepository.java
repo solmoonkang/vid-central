@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.model.Category;
 
-public interface VideoRepository extends JpaRepository<Video, Long> {
+public interface VideoRepository extends JpaRepository<Video, Long>, VideoRepositoryCustom {
 
 	@Query("SELECT DISTINCT v FROM Video v "
 		+ "LEFT JOIN FETCH v.tags vt "
