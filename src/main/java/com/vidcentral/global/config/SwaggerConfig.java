@@ -23,18 +23,18 @@ public class SwaggerConfig {
 	@Bean
 	public OpenAPI swaggerOpenAPI() {
 		final Info info = new Info().title(OPEN_API_TITLE).description(OPEN_API_DESCRIPTION);
-		final SecurityRequirement securityRequirement = new SecurityRequirement().addList(ACCESS_TOKEN_HEADER);
+		final SecurityRequirement securityRequirement = new SecurityRequirement().addList(AUTHORIZATION_HEADER);
 		final SecurityScheme accessTokenSecurityScheme = getSecurityScheme();
-		final Components components = new Components().addSecuritySchemes(BEARER, accessTokenSecurityScheme);
+		final Components components = new Components().addSecuritySchemes(BEARER_PREFIX, accessTokenSecurityScheme);
 
 		return new OpenAPI().info(info).addSecurityItem(securityRequirement).components(components);
 	}
 
 	private SecurityScheme getSecurityScheme() {
 		return new SecurityScheme()
-			.name(ACCESS_TOKEN_HEADER)
+			.name(AUTHORIZATION_HEADER)
 			.type(Type.HTTP)
-			.scheme(BEARER)
+			.scheme(BEARER_PREFIX)
 			.in(HEADER)
 			.description(SECURITY_SCHEME_DESCRIPTION);
 	}
