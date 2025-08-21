@@ -3,6 +3,7 @@ package com.vidcentral.api.dto.video.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.querydsl.core.annotations.QueryProjection;
 import com.vidcentral.api.dto.comment.response.CommentResponse;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -44,4 +45,19 @@ public record VideoDetailResponse(
 	@Schema(description = "댓글 목록")
 	List<CommentResponse> commentResponseList
 ) {
+
+	@QueryProjection
+	public VideoDetailResponse(Long videoId, String title, String description, LocalDateTime uploadedAt,
+		String filePath, String thumbnailPath, Long viewCount, String uploaderNickname, Long likeCount,
+		Long dislikeCount) {
+
+		this(videoId, title, description, uploadedAt, filePath, thumbnailPath, viewCount, uploaderNickname,
+			likeCount, dislikeCount, null);
+	}
+
+	public VideoDetailResponse withComments(List<CommentResponse> comments) {
+		return new VideoDetailResponse(
+			this.videoId, this.title, this.description, this.uploadedAt, this.filePath, this.thumbnailPath,
+			this.viewCount, this.uploaderNickname, this.likeCount, this.dislikeCount, comments);
+	}
 }
