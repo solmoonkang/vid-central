@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.model.Category;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
+import com.vidcentral.api.dto.video.response.VideoDetailResponse;
 import com.vidcentral.global.error.exception.NotFoundException;
 import com.vidcentral.global.error.model.ErrorCode;
 
@@ -23,6 +24,11 @@ public class VideoReadService {
 
 	public Video findVideoById(Long videoId) {
 		return videoRepository.findById(videoId)
+			.orElseThrow(() -> new NotFoundException(ErrorCode.VIDEO_NOT_FOUND));
+	}
+
+	public VideoDetailResponse findVideoDetailResponseById(Long videoId) {
+		return videoRepository.findVideoDetailWithUploader(videoId)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.VIDEO_NOT_FOUND));
 	}
 
