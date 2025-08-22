@@ -11,6 +11,7 @@ import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.model.Category;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
 import com.vidcentral.api.dto.video.response.VideoDetailResponse;
+import com.vidcentral.api.dto.video.response.VideoResponse;
 import com.vidcentral.global.error.exception.NotFoundException;
 import com.vidcentral.global.error.model.ErrorCode;
 
@@ -38,7 +39,7 @@ public class VideoReadService {
 	}
 
 	@Cacheable(value = "videoSearch", key = "#keyword + '::' + #pageable.pageNumber")
-	public Page<Video> searchVideos(String keyword, Pageable pageable) {
-		return videoRepository.findByTitleOrNicknameContaining(keyword, pageable);
+	public Page<VideoResponse> searchVideos(String keyword, Pageable pageable) {
+		return videoRepository.findVideoResponseByKeyword(keyword, pageable);
 	}
 }
