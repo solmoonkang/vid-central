@@ -75,14 +75,10 @@ public class VideoService {
 	}
 
 	public PagedResponse<VideoResponse> getSearchVideos(String keyword, Pageable pageable) {
-		final Page<Video> videosPage = videoReadService.searchVideos(keyword, pageable);
-
-		final List<VideoResponse> videoResponses = videosPage.getContent().stream()
-			.map(VideoMapper::toVideoResponse)
-			.toList();
-
-		final PaginationInfo paginationInfo = new PaginationInfo(videosPage.getNumber() + 1, videosPage.hasNext());
-		return new PagedResponse<>(videoResponses, paginationInfo);
+		final Page<VideoResponse> videoResponses = videoReadService.searchVideos(keyword, pageable);
+		final PaginationInfo paginationInfo = new PaginationInfo(
+			videoResponses.getNumber() + 1, videoResponses.hasNext());
+		return new PagedResponse<>(videoResponses.getContent(), paginationInfo);
 	}
 
 	@Transactional
