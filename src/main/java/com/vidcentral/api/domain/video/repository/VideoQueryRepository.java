@@ -9,9 +9,11 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.vidcentral.api.domain.member.entity.QMember;
 import com.vidcentral.api.domain.video.entity.QVideo;
+import com.vidcentral.api.domain.video.model.Category;
 import com.vidcentral.api.dto.video.response.QVideoDetailResponse;
 import com.vidcentral.api.dto.video.response.VideoDetailResponse;
 import com.vidcentral.api.dto.video.response.VideoResponse;
@@ -25,6 +27,23 @@ public class VideoQueryRepository implements VideoRepositoryCustom {
 
 	private final QVideo video = QVideo.video;
 	private final QMember member = QMember.member;
+
+	@Override
+	public List<VideoResponse> findRecommendedVideoResponsesBy(List<Category> categories, List<String> tags,
+		List<Long> excludedVideoIds, Pageable pageable) {
+		final StringPath tagPath = video.tags.any();
+
+		return jpaQueryFactory
+			.select(toVideoResponseProjection())
+			.from(video)
+			.join(video.member, member)
+			.where(video.category.in(categories).or(tagPath.in(tags)).and(video.id.notIn(excludedVideoIds)))
+			.distinct()
+			.orderBy(video.viewCount.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+	}
 
 	@Override
 	public Page<VideoResponse> findVideoResponseByKeyword(String keyword, Pageable pageable) {
@@ -48,7 +67,7 @@ public class VideoQueryRepository implements VideoRepositoryCustom {
 	}
 
 	private ConstructorExpression<VideoResponse> toVideoResponseProjection() {
-		return Projections.constructor(VideoResponse.class, video.id, video.title, member.nickname, video.thumbnailPath,
+		return Projections.constructor(VideoResponse.class, video.id, video.thumbnailPath, video.title, member.nickname,
 			video.viewCount, video.createdAt);
 	}
 
