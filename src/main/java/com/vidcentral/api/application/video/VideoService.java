@@ -15,7 +15,6 @@ import com.vidcentral.api.application.comment.mapper.CommentMapper;
 import com.vidcentral.api.application.history.ViewingHistoryWriteService;
 import com.vidcentral.api.application.member.MemberReadService;
 import com.vidcentral.api.application.recommend.RecommendationService;
-import com.vidcentral.api.application.video.mapper.VideoMapper;
 import com.vidcentral.api.domain.comment.entity.Comment;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
@@ -68,8 +67,7 @@ public class VideoService {
 	}
 
 	public PagedResponse<VideoResponse> getRecommendedVideosForUser(AuthMember authMember) {
-		final List<Video> videos = recommendationService.getRecommendedVideos(authMember.id());
-		final List<VideoResponse> videoResponses = VideoMapper.toVideoListResponse(videos);
+		final List<VideoResponse> videoResponses = recommendationService.getRecommendedVideos(authMember.id());
 		final PaginationInfo paginationInfo = new PaginationInfo(1, false);
 		return new PagedResponse<>(videoResponses, paginationInfo);
 	}
