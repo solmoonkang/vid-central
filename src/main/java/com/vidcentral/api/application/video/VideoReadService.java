@@ -33,9 +33,9 @@ public class VideoReadService {
 			.orElseThrow(() -> new NotFoundException(ErrorCode.VIDEO_NOT_FOUND));
 	}
 
-	public List<Video> findRecommendedVideoBy(List<Category> categories, List<String> tags, List<Long> videoIds,
-		Pageable pageable) {
-		return videoRepository.findRecommendedVideos(categories, tags, videoIds, pageable);
+	public List<VideoResponse> findRecommendedVideoResponses(List<Category> categories, List<String> tags,
+		List<Long> videoIds, Pageable pageable) {
+		return videoRepository.findRecommendedVideoResponsesBy(categories, tags, videoIds, pageable);
 	}
 
 	@Cacheable(value = "videoSearch", key = "#keyword + '::' + #pageable.pageNumber")
