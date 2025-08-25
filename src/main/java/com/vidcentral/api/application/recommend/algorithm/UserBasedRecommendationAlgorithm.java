@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import com.vidcentral.api.application.history.ViewingHistoryReadService;
 import com.vidcentral.api.application.video.VideoReadService;
 import com.vidcentral.api.domain.history.entity.ViewingHistory;
-import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.model.Category;
+import com.vidcentral.api.dto.video.response.VideoResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +25,7 @@ public class UserBasedRecommendationAlgorithm implements RecommendationAlgorithm
 	private final ViewingHistoryReadService viewingHistoryReadService;
 
 	@Override
-	public List<Video> recommend(Long memberId) {
+	public List<VideoResponse> recommend(Long memberId) {
 		final List<ViewingHistory> recentHistories = viewingHistoryReadService.findRecentViewingHistoriesBy(
 			memberId, PageRequest.of(0, RECENT_HISTORY_COUNT));
 
@@ -39,7 +39,7 @@ public class UserBasedRecommendationAlgorithm implements RecommendationAlgorithm
 			.map(history -> history.getVideo().getId())
 			.toList();
 
-		return videoReadService.findRecommendedVideoBy(
+		return videoReadService.findRecommendedVideoResponses(
 			recentCategories, recentTags, watchedVideoIds, PageRequest.of(0, RECOMMENDED_VIDEO_COUNT));
 	}
 
