@@ -24,6 +24,7 @@ import com.vidcentral.global.error.exception.ConflictException;
 import com.vidcentral.global.error.exception.NotFoundException;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("MemberService 단위 테스트")
 class MemberServiceTest {
 
 	@Mock
@@ -107,7 +108,7 @@ class MemberServiceTest {
 
 			@Test
 			@DisplayName("[❎ FAILURE] signUpMember: 입력 비밀번호와 확인 비밀번호가 일치하지 않아 회원가입에 실패했습니다.")
-			void signUpMember_badRequestException_passwordMisMatch_fail() {
+			void signUpMember_badRequestException_passwordMismatch_fail() {
 				// GIVEN
 				final SignUpRequest mismatchPasswordRequest = MemberFixture.createSignUpRequest()
 					.checkPassword("mismatchTestPassword")
