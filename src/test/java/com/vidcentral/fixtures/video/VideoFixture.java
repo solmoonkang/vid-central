@@ -12,7 +12,11 @@ public class VideoFixture {
 			member, DEFAULT_TITLE, DEFAULT_DESCRIPTION, DEFAULT_RESOLUTIONS, DEAFULT_CATEGORY, DEFAULT_TAGS);
 	}
 
-	public static CreateRequestBuilder createCreateVideoRequest() {
-		return new CreateRequestBuilder();
+	public static CreateVideoRequestBuilder createCreateVideoRequest() {
+		return new CreateVideoRequestBuilder();
+	}
+
+	public static UploadChunkRequestBuilder createUploadChunkRequest() {
+		return new UploadChunkRequestBuilder();
 	}
 }
