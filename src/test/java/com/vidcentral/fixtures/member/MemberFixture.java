@@ -12,7 +12,7 @@ public class MemberFixture {
 		return new SignUpRequestBuilder();
 	}
 
-	public static UpdateRequestBuilder createUpdateMemberRequest() {
-		return new UpdateRequestBuilder();
+	public static UpdateMemberRequestBuilder createUpdateMemberRequest() {
+		return new UpdateMemberRequestBuilder();
 	}
 }
