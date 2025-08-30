@@ -1,6 +1,7 @@
 package com.vidcentral.fixtures;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.mock.web.MockMultipartFile;
@@ -20,11 +21,15 @@ public final class FixtureConstant {
 	public static final String UPDATED_NICKNAME = "updatedTestMember";
 	public static final String UPDATED_INTRODUCE = "updatedTestIntroduce";
 
+	public static final Long DEFAULT_VIDEO_ID = 1L;
 	public static final String DEFAULT_TITLE = "testVideoTitle";
+	public static final String DEFAULT_THUMBNAIL_PATH = "testVideoThumbnailPath.com";
 	public static final String DEFAULT_DESCRIPTION = "testVideoDescription";
 	public static final List<String> DEFAULT_RESOLUTIONS = List.of("480p", "720p", "1080p");
 	public static final Category DEAFULT_CATEGORY = Category.ETC;
 	public static final List<String> DEFAULT_TAGS = List.of("testTag1", "testTag2", "testTag3");
+	public static final Long DEFAULT_VIEW_COUNT = 0L;
+	public static final LocalDateTime DEFAULT_UPLOADED_AT = LocalDateTime.now();
 
 	public static final MultipartFile DEAFULT_VIDEO_FILE = new MockMultipartFile(
 		"file", "testVideoOriginalFileName.mp4", "video/mp4", "testData".getBytes(StandardCharsets.UTF_8));
