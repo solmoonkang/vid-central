@@ -19,4 +19,8 @@ public class VideoFixture {
 	public static UploadChunkRequestBuilder createUploadChunkRequest() {
 		return new UploadChunkRequestBuilder();
 	}
+
+	public static VideoResponseBuilder createVideoResponse() {
+		return new VideoResponseBuilder();
+	}
 }
