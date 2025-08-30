@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -18,11 +19,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.vidcentral.api.application.member.MemberReadService;
+import com.vidcentral.api.application.recommend.RecommendationService;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.repository.VideoUploadRedisRepository;
+import com.vidcentral.api.dto.pagination.PagedResponse;
 import com.vidcentral.api.dto.video.request.CreateVideoRequest;
 import com.vidcentral.api.dto.video.request.UploadChunkRequest;
+import com.vidcentral.api.dto.video.response.VideoResponse;
 import com.vidcentral.fixtures.auth.AuthFixture;
 import com.vidcentral.fixtures.member.MemberFixture;
 import com.vidcentral.fixtures.video.VideoFixture;
@@ -43,6 +47,9 @@ class VideoServiceTest {
 
 	@Mock
 	private VideoReadService videoReadService;
+
+	@Mock
+	private RecommendationService recommendationService;
 
 	@Mock
 	private VideoUploadRedisRepository videoUploadRedisRepository;
@@ -264,6 +271,64 @@ class VideoServiceTest {
 
 				verify(videoWriteService, never()).uploadVideoChunk(any(Video.class), any(UploadChunkRequest.class));
 			}
+		}
+	}
+
+	@Nested
+	@DisplayName("추천 비디오 목록 조회 테스트: getRecommendedVideos")
+	class GetRecommendedVideosTest {
+
+		@Nested
+		@DisplayName("추천 비디오 목록 조회 성공 테스트")
+		class GetRecommendedVideosSuccess {
+			@Test
+			@DisplayName("[✅ SUCCESS] getRecommendedVideos: 인증된 사용자로 추천 비디오 목록 조회를 성공적으로 완료했습니다.")
+			void getRecommendedVideos_videoResponse_success() {
+				// GIVEN
+				final AuthMember authMember = AuthFixture.createAuthMember().build();
+				final List<VideoResponse> videoResponses = List.of(
+					VideoFixture.createVideoResponse().videoId(1L).title("testVideoTitle1").build(),
+					VideoFixture.createVideoResponse().videoId(2L).title("testVideoTitle2").build()
+				);
+
+				when(recommendationService.getRecommendedVideos(anyLong())).thenReturn(videoResponses);
+
+				// WHEN
+				final PagedResponse<VideoResponse> videoPagedResponse = videoService.getRecommendedVideosForUser(
+					authMember);
+
+				// THEN
+				assertThat(videoPagedResponse.content()).isEqualTo(videoResponses);
+				assertThat(videoPagedResponse.paginationInfo().pageNumber()).isEqualTo(1);
+				assertThat(videoPagedResponse.paginationInfo().hasNext()).isFalse();
+				verify(recommendationService, times(1)).getRecommendedVideos(authMember.id());
+			}
+
+			@Test
+			@DisplayName("[✅ SUCCESS] getRecommendedVideos: 인증되지 않은 사용자로 빈 비디오 목록 조회를 성공적으로 완료했습니다.")
+			void getRecommendedVideos_emptyList_success() {
+				// GIVEN
+				final AuthMember authMember = AuthFixture.createAuthMember().id(99L).build();
+				final List<VideoResponse> emptyVideoResponses = List.of();
+
+				when(recommendationService.getRecommendedVideos(anyLong())).thenReturn(emptyVideoResponses);
+
+				// WHEN
+				final PagedResponse<VideoResponse> videoPagedResponse = videoService.getRecommendedVideosForUser(
+					authMember);
+
+				// THEN
+				assertThat(videoPagedResponse.content()).isEmpty();
+				assertThat(videoPagedResponse.paginationInfo().pageNumber()).isEqualTo(1);
+				assertThat(videoPagedResponse.paginationInfo().hasNext()).isFalse();
+				verify(recommendationService, times(1)).getRecommendedVideos(authMember.id());
+			}
+		}
+
+		@Nested
+		@DisplayName("추천 비디오 목록 조회 실패 테스트")
+		class GetRecommendedVideosFailure {
+
 		}
 	}
 }
