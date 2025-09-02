@@ -17,6 +17,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.vidcentral.api.application.member.MemberReadService;
 import com.vidcentral.api.application.recommend.RecommendationService;
@@ -328,6 +331,81 @@ class VideoServiceTest {
 		@Nested
 		@DisplayName("추천 비디오 목록 조회 실패 테스트")
 		class GetRecommendedVideosFailure {
+
+		}
+	}
+
+	@Nested
+	@DisplayName("검색 비디오 목록 조회 테스트: getSearchVideos")
+	class GetSearchVideosTest {
+
+		@Nested
+		@DisplayName("검색 비디오 목록 조회 성공 테스트")
+		class GetSearchVideosSuccess {
+			@Test
+			@DisplayName("[✅ SUCCESS] getSearchVideos: 검색 결과가 있는 경우, 검색 비디오 목록 조회를 성공적으로 완료했습니다.")
+			void getSearchVideos_videoResponse_success() {
+				// GIVEN
+				final String keyword = "testVideoKeyword";
+				final Pageable pageable = PageRequest.of(0, 10);
+
+				final Page page = mock(Page.class);
+				final List<VideoResponse> videoResponses = List.of(
+					VideoFixture.createVideoResponse().videoId(1L).title("testVideoTitle1").build(),
+					VideoFixture.createVideoResponse().videoId(2L).title("testVideoTitle2").build()
+				);
+
+				when(videoReadService.searchVideos(anyString(), any(Pageable.class))).thenReturn(page);
+				when(page.getContent()).thenReturn(videoResponses);
+				when(page.getNumber()).thenReturn(pageable.getPageNumber());
+				when(page.hasNext()).thenReturn(true);
+
+				// WHEN
+				final PagedResponse<VideoResponse> videoPagedResponse = videoService.getSearchVideos(keyword, pageable);
+
+				// THEN
+				assertThat(videoPagedResponse.content()).isEqualTo(videoResponses);
+				assertThat(videoPagedResponse.paginationInfo().pageNumber()).isEqualTo(pageable.getPageNumber() + 1);
+				assertThat(videoPagedResponse.paginationInfo().hasNext()).isTrue();
+				verify(videoReadService, times(1)).searchVideos(keyword, pageable);
+				verify(page, times(1)).getContent();
+				verify(page, times(1)).getNumber();
+				verify(page, times(1)).hasNext();
+			}
+
+			@Test
+			@DisplayName("[✅ SUCCESS] getSearchVideos: 검색 결과가 없는 경우, 빈 검색 비디오 목록 조회를 성공적으로 완료했습니다.")
+			void getSearchVideos_emptyList_success() {
+				// GIVEN
+				final String notExistedKeyword = "notExistedTestVideoKeyword";
+				final Pageable pageable = PageRequest.of(0, 10);
+
+				final Page page = mock(Page.class);
+				final List<VideoResponse> emptyVideoResponses = List.of();
+
+				when(videoReadService.searchVideos(anyString(), any(Pageable.class))).thenReturn(page);
+				when(page.getContent()).thenReturn(emptyVideoResponses);
+				when(page.getNumber()).thenReturn(pageable.getPageNumber());
+				when(page.hasNext()).thenReturn(false);
+
+				// WHEN
+				final PagedResponse<VideoResponse> videoPagedResponse = videoService
+					.getSearchVideos(notExistedKeyword, pageable);
+
+				// THEN
+				assertThat(videoPagedResponse.content()).isEmpty();
+				assertThat(videoPagedResponse.paginationInfo().pageNumber()).isEqualTo(pageable.getPageNumber() + 1);
+				assertThat(videoPagedResponse.paginationInfo().hasNext()).isFalse();
+				verify(videoReadService, times(1)).searchVideos(notExistedKeyword, pageable);
+				verify(page, times(1)).getContent();
+				verify(page, times(1)).getNumber();
+				verify(page, times(1)).hasNext();
+			}
+		}
+
+		@Nested
+		@DisplayName("검색 비디오 목록 조회 실패 테스트")
+		class GetSearchVideosFailure {
 
 		}
 	}
